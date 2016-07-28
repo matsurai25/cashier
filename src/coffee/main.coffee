@@ -1,9 +1,20 @@
 $ = require 'jQuery'
-Vue = require 'Vue'
-VueTouch = require 'vue-touch'
-Vue.use VueTouch
 moment = require 'moment'
+Vue = require 'Vue'
 
+# タッチ操作を使いやすく
+VueTouch = require 'vue-touch'
+VueTouch.registerCustomEvent('dualtap', {
+  type: 'tap',
+  pointers: 2
+})
+VueTouch.registerCustomEvent('tripletap', {
+  type: 'tap',
+  pointers: 3
+})
+Vue.use VueTouch
+
+# データ系の関数
 store = require './store'
 
 if !store.getState()?
@@ -15,12 +26,22 @@ $ ->
     el: '#vue'
     data:store.getState()
     methods:
+      # 保存
       save: () ->
         store.setState(this.$data)
+
+      # 現在の使用容量
+      dispStorage: () ->
+        str = JSON.stringify(store.getState())
+        str_length = encodeURIComponent(String(str)).replace(/%../g,"x").length
+        str_size = Math.floor( str_length / 1048576 * 100) * 0.01
+        console.log str_size
+        return str_size+"MB"
 
       dispTime: (timestamp) ->
         return moment(timestamp).format("HH時mm分")
 
+      # アイテムを新規追加
       createItem: () ->
         console.log "新規アイテムを登録"
         id = moment().format("YYYYMMDDHHmmss")
@@ -40,6 +61,57 @@ $ ->
           scrollTop: 0
         }, 500)
 
+      # ファイル選択時に実行
+      getDataUrl: () ->
+        # 画像をエンコード
+        _this = this
+        files = $(".createitem .js-image-upload").prop('files')
+        if files.length == 0
+          console.log 'ファイル選択してない！'
+        else
+          file = files[0]
+          reader = new FileReader()
+          reader.onerror = ->
+            alert 'ファイル読み取りに失敗しました'
+
+          reader.onload = ->
+            # 成功時に縮小関数内で非同期に処理する
+            _this.makeSmall(reader.result)
+
+          reader.readAsDataURL(file)
+
+      # 画像を圧縮
+      makeSmall: (data) ->
+        _this = this
+        # 画像データの縦横サイズを取得する
+        rectWidth = 280
+        image = new Image()
+        image.src = data
+
+        # ロード完了後に非同期処理させる
+        $(image).bind 'load', ->
+          width = image.width
+          height = image.height
+          # 画像の大きさをキメる
+          if width > height
+            new_width = width * rectWidth / height
+            new_height = rectWidth
+
+          else
+            new_width = rectWidth
+            new_height = height * rectWidth / width
+
+          # 画像出力用のキャンバスを定義
+          canvas = document.createElement("canvas")
+          canvas.width = new_width
+          canvas.height = new_height
+
+          # 画像をセットしてデータURLにして返す
+          canvas.getContext("2d").drawImage(image, 0, 0, new_width, new_height)
+          dataUrl =  canvas.toDataURL("image/jpeg", 0.4)
+          $(".createitem .js-item-thumb").val(dataUrl)
+
+      # idからアイテムを探す
       findItem: (item_id) ->
         items =  this.$data.items
         for item in items
@@ -143,6 +215,17 @@ $ ->
             current.items.splice(i,1)
         )
         this.save()
+
+      # 特定のアイテムそのものを削除
+      destroyItem: (item) ->
+        return unless window.confirm('削除してもよろしいですか？') == true
+        items =  this.$data.items
+        items.some( (v, i) ->
+          if v.id == item.id
+            items.splice(i,1)
+        )
+        this.save()
+        location.reload()
 
       # 初期化
       initialize: () ->

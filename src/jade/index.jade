@@ -20,11 +20,9 @@ html
     .items
       template(v-for="item in items")
         .item(:class="isAdded(item)", 
-          v-touch:tap="toggleCart(item)", 
-          v-touch:swipeup="addCartItem(item)", 
-          v-touch:swiperight="addCartItem(item)", 
-          v-touch:swipedown="removeCartItem(item)", 
-          v-touch:swipeleft="removeCartItem(item)")
+          v-touch:tap="addCartItem(item)", 
+          v-touch:press="toggleCart(item)", 
+          v-touch:dualtap="destroyItem(item)")
           img.thumb(:src="item.thumb", alt="", v-show="item.thumb")
           .name {{item.name}}
           .price.fa.fa-jpy {{item.price}}
@@ -57,8 +55,9 @@ html
 
       section
         h6 thumbnail
-        input.js-item-thumb(type="text", placeholder="https://....")
-        .caption サムネイルにしたい画像のURLを入力してください。Twitterに上げたりとかすればよいのでは。
+        input.js-image-upload(type="file", name='image', v-on:change="getDataUrl()")
+        input.js-item-thumb(type="hidden")
+        .caption サムネイルにしたい画像を登録してください。
 
       section
         h6 price
