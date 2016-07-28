@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+html
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=320,user-scalable=no")
+    link(rel="stylesheet", href="./assets/css/font-awesome.css")
+    link(rel="stylesheet", href="./assets/css/application.css")
+    script(src="./assets/js/bundle.js")
+    meta(name="apple-mobile-web-app-capable", content="yes")
+    meta(name="apple-mobile-web-app-status-bar-style", content="black-translucent")
+
+  body#vue
+    .result
+      .price
+        .fa.fa-jpy
+        span.num {{cartPrice()}}
+      .confirm(v-on:click="decide()")
+        |確定
+
+    .items
+      template(v-for="item in items")
+        .item(:class="addedCartItem(item)", v-on:click="toggleCart(item)")
+          img.thumb(:src="item.thumb", alt="", v-show="item.thumb")
+          .name {{item.name}}
+          .price.fa.fa-jpy {{item.price}}
+          .count.fa.fa-line-chart {{item.count}}
+
+    .deals
+      table.deals__list
+        tr.deals__list__head
+          td 合計
+          td.deals__list__price 
+            |{{earnings()}}
+          td
+
+        tr.deal(v-for="deal in deals")
+          td
+            span {{dispTime(deal.created)}}
+          td.deals__list__price
+            span {{deal.price}}
+          td.deals__list__name
+            span(v-for="item_id in deal.items")
+              {{findItem(item_id).name}}
+
+    .createitem
+      h4 新規アイテム追加
+      section
+        h6 name
+        input.js-item-name(type="text", placeholder="タイトル")
+        .caption タイトル。文字数制限はないですがわかりやすものが良いかと。
+
+      section
+        h6 thumbnail
+        input.js-item-thumb(type="text", placeholder="https://....")
+        .caption サムネイルにしたい画像のURLを入力してください。Twitterに上げたりとかすればよいのでは。
+
+      section
+        h6 price
+        input.js-item-price(type="number", placeholder="1000")
+        .caption 半角数字で入力。コンマ等不要。
+      
+      .btn(v-on:click="createItem()") 追加する
+
+    .removeitem
+
+
+  .btn(v-on:click="setdummy()") ダミーを入れる
+  .btn(v-on:click="initialize()") 初期化する
