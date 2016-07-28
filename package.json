@@ -12,7 +12,8 @@
     "gulp-plumber": "^1.1.0",
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^2.2.0",
-    "npm": "^3.8.2"
+    "npm": "^3.8.2",
+    "vue-touch": "^1.1.0"
   },
   "devDependencies": {
     "date-utils": "^1.2.21"

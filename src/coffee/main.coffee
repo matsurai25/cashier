@@ -1,7 +1,11 @@
 $ = require 'jQuery'
 Vue = require 'Vue'
-store = require './store'
+VueTouch = require 'vue-touch'
+Vue.use VueTouch
 moment = require 'moment'
+
+store = require './store'
+
 if !store.getState()?
   # store.init()
   store.setDummy()
@@ -15,7 +19,7 @@ $ ->
         store.setState(this.$data)
 
       dispTime: (timestamp) ->
-        return moment(timestamp).format("HH:mm:ss")
+        return moment(timestamp).format("HH時mm分")
 
       createItem: () ->
         console.log "新規アイテムを登録"
@@ -42,12 +46,21 @@ $ ->
           if item.id == item_id
             return item
 
+      # itemの売上カウントを増やす
       increseItemCount: (item_id) ->
         item = this.findItem(item_id)
         item.count++
         this.save()
 
+      # itemの売上カウントを減らす
+      decreseItemCount: (item_id) ->
+        item = this.findItem(item_id)
+        item.count--
+        this.save()
+
+      # 決済する
       decide: () ->
+        return if this.cartPrice() == 0 # 何もない時は追加しない
         deal =  this.$data.current
         deal.created = moment().format("YYYY-MM-DD HH:mm:ss")
         deal.price = this.cartPrice()
@@ -58,6 +71,7 @@ $ ->
         this.clearCart()
         this.save()
 
+      # カート内のアイテムの値段の合計
       cartPrice: () ->
         price = 0
         current =  this.$data.current
@@ -67,6 +81,7 @@ $ ->
             price += Number(item.price)
         return price
 
+      # 合計売上
       earnings: () ->
         eaning = 0
         deals =  this.$data.deals
@@ -75,6 +90,7 @@ $ ->
             eaning += deal.price
         return eaning
 
+      # カート内のアイテムを全て削除
       clearCart: () ->
         current =  this.$data.current
         current.items = []
@@ -82,24 +98,51 @@ $ ->
         current.created = null
         this.save()
 
-      # クラスを出力
-      addedCartItem: (item) ->
+      # カートにあるか判定してクラスを出力
+      isAdded: (item) ->
         current =  this.$data.current
         if current.items.indexOf(item.id) >= 0
           return "added"
 
-      # カートに追加したり
+      # 特定のアイテムがカート内に何個あるか出力
+      countAddedItem: (item) ->
+        current =  this.$data.current
+        count = 0
+        for item_id in current.items
+          if item.id == item_id
+            count++
+        return count
+
+      # カートに追加したり削除したり
       toggleCart: (item) ->
         current =  this.$data.current
         if current.items.indexOf(item.id) < 0
           current.items.push(item.id)
           this.save()
         else
-          current.items.some( (v, i) ->
-            if v == item.id
-              current.items.splice(i,1)
+          # 全て削除
+          new_items = []
+          current.items.forEach( (v, i) ->
+            if v != item.id
+              new_items.push v
           )
+          current.items = new_items
           this.save()
+
+      # 特定のアイテムをカートに一つ追加
+      addCartItem: (item) ->
+        current =  this.$data.current
+        current.items.push(item.id)
+        this.save()
+
+      # 特定のアイテムをカートから一つ削除
+      removeCartItem: (item) ->
+        current =  this.$data.current
+        current.items.some( (v, i) ->
+          if v == item.id
+            current.items.splice(i,1)
+        )
+        this.save()
 
       # 初期化
       initialize: () ->
@@ -107,7 +150,7 @@ $ ->
           store.init()
           location.reload()
 
-      # 初期化
+      # ダミーで上書き
       setdummy: () ->
         if window.confirm("初期化し、ダミーをセットします。よろしいですか？")
           store.setDummy()

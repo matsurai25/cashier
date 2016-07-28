@@ -19,16 +19,22 @@ html
 
     .items
       template(v-for="item in items")
-        .item(:class="addedCartItem(item)", v-on:click="toggleCart(item)")
+        .item(:class="isAdded(item)", 
+          v-touch:tap="toggleCart(item)", 
+          v-touch:swipeup="addCartItem(item)", 
+          v-touch:swiperight="addCartItem(item)", 
+          v-touch:swipedown="removeCartItem(item)", 
+          v-touch:swipeleft="removeCartItem(item)")
           img.thumb(:src="item.thumb", alt="", v-show="item.thumb")
           .name {{item.name}}
           .price.fa.fa-jpy {{item.price}}
           .count.fa.fa-line-chart {{item.count}}
+          .added_count(v-if="countAddedItem(item)") {{countAddedItem(item)}}
 
     .deals
       table.deals__list
         tr.deals__list__head
-          td 合計
+          td
           td.deals__list__price 
             |{{earnings()}}
           td
@@ -39,7 +45,7 @@ html
           td.deals__list__price
             span {{deal.price}}
           td.deals__list__name
-            span(v-for="item_id in deal.items")
+            span(v-for="item_id in deal.items", track-by="$index")
               {{findItem(item_id).name}}
 
     .createitem
