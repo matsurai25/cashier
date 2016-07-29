@@ -48,6 +48,15 @@ $ ->
         name = $(".createitem .js-item-name").val()
         thumb = $(".createitem .js-item-thumb").val()
         price = $(".createitem .js-item-price").val()
+        if name.length == 0
+          alert "項目名を入力してください"
+          return false
+        if thumb.length == 0
+          alert "サムネイルを登録してください"
+          return false
+        if price.length == 0
+          alert "値段を入力してください"
+          return false
         item = {
           id: id
           name: name
@@ -110,6 +119,9 @@ $ ->
           canvas.getContext("2d").drawImage(image, 0, 0, new_width, new_height)
           dataUrl =  canvas.toDataURL("image/jpeg", 0.4)
           $(".createitem .js-item-thumb").val(dataUrl)
+          $(".createitem .js-show-thumb").show()
+            .find('img').attr('src', dataUrl)
+
 
       # idからアイテムを探す
       findItem: (item_id) ->

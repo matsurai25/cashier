@@ -55,6 +55,8 @@ html
 
       section
         h6 thumbnail
+        .thumb_image.js-show-thumb
+          img(src="", alt="")
         input.js-image-upload(type="file", name='image', v-on:change="getDataUrl()")
         input.js-item-thumb(type="hidden")
         .caption サムネイルにしたい画像を登録してください。
