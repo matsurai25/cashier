@@ -35,7 +35,6 @@ $ ->
         str = JSON.stringify(store.getState())
         str_length = encodeURIComponent(String(str)).replace(/%../g,"x").length
         str_size = Math.floor( str_length / 1048576 * 100) * 0.01
-        console.log str_size
         return str_size+"MB"
 
       dispTime: (timestamp) ->
@@ -43,7 +42,6 @@ $ ->
 
       # アイテムを新規追加
       createItem: () ->
-        console.log "新規アイテムを登録"
         id = moment().format("YYYYMMDDHHmmss")
         name = $(".createitem .js-item-name").val()
         thumb = $(".createitem .js-item-thumb").val()
