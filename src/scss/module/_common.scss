@@ -214,6 +214,7 @@ body{
   height: 100vh;
   padding: 20px;
   background-color: rgba(desaturate($color-blue, 30), 0.8);
+  opacity: 0;
   .modal-component{
     width: 100%;
     max-width:320px;
