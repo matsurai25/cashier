@@ -12,8 +12,7 @@ if !store.getState()?
   store.setDummy()
 
 
-# vueを拡張
-# タッチ操作を使いやすく
+# タッチ操作を登録
 VueTouch.registerCustomEvent('dualtap', {
   type: 'tap',
   pointers: 2
@@ -24,7 +23,7 @@ VueTouch.registerCustomEvent('tripletap', {
 })
 Vue.use VueTouch
 
-
+# コンポーネントの登録
 Vue.component('modal-statistics', {
   template: "#modal-statistics",
 })
@@ -54,6 +53,7 @@ $ ->
         str_size = Math.floor( str_length / 1048576 * 100) * 0.01
         return str_size+"MB"
 
+      # 現在時刻を表示
       dispTime: (timestamp) ->
         return moment(timestamp).format("HH時mm分")
 
@@ -306,7 +306,12 @@ $ ->
 
       # stateのモーダルコンテントが存在するなら、モーダルを表示
       modal_f: () ->
-        if this.$data.state.modalContent?
+        if this.$data.state? && this.$data.state.modalContent?
+          $('body').css {
+            position: 'fixed',
+            top: -1 * $(window).scrollTop()
+          }
           return true
+        $('body').removeAttr('style')
         return false
   )
