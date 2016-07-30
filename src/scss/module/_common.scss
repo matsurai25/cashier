@@ -28,7 +28,7 @@ body{
     right: 15px;
     width: 70px;
     height: 65px;
-    background-color: $color-red;
+    background-color: $color-blue;
     text-align: center;
     line-height: 65px;
     font-size: 16px;
@@ -91,12 +91,12 @@ body{
       color: $color-black;
     }
     &.added{
-      background-color: $color-red;
+      background-color: $color-blue;
       .thumb{
         opacity: 0.7;
       }
       .name,.price,.count{
-        background-color: $color-red;
+        background-color: $color-blue;
         color: #FFF;
       }
     }
@@ -118,11 +118,13 @@ body{
       background-color: #fff;
     }
     td{
+      white-space: nowrap;
       padding: 5px;
     }
     &__head{
       background-color: $color-gray;
-      color: $color-white
+      color: $color-white;
+      white-space: nowrap;
     }
     &__price{
       text-align: right;
@@ -131,11 +133,45 @@ body{
       }
     }
     &__name{
+      white-space:normal !important;
       span{
         display: inline-block;
         margin: 3px;
         padding: 3px;
         background-color: #F2F2F2;
+      }
+    }
+    &__statistics{
+      span::after{
+        display: inline-block;
+        padding: 2px 4px;
+        background-color: #EFEFEF;
+        white-space: nowrap;
+        text-align: center;
+        font-size: 10px;
+        color: $color-black;
+      }
+      .deal-statistics-gender[data='man']::after{
+        content:'男';
+        background-color: lighten(desaturate($color-blue, 40), 10);
+        color: #FFF;
+      }
+      .deal-statistics-gender[data='woman']::after{
+        content:'女';
+        background-color: lighten(desaturate($color-red, 40), 10);
+        color: #FFF;
+      }
+      span[data='10']::after{
+        content:'10';
+      }
+      span[data='20']::after{
+        content:'20';
+      }
+      span[data='30']::after{
+        content:'30';
+      }
+      span[data='50']::after{
+        content:'50';
       }
     }
   }
@@ -199,7 +235,8 @@ body{
   color: $color-white;
   cursor: pointer;
   &-blue{
-    background-color: $color-blue;
+    @include gradient(desaturate($color-blue, 10), desaturate(adjust-hue($color-blue, 80deg), 80), horizontal);
+    // background-color: $color-blue;
   }
   &-green{
     background-color: $color-green;
@@ -210,15 +247,15 @@ body{
   position: fixed;
   top: 0;
   left: 0;
+  z-index: 20;
   width: 100%;
   height: 100vh;
   padding: 20px;
-  background-color: rgba(desaturate($color-blue, 30), 0.8);
+  @include gradient(rgba(desaturate($color-blue, 10), 0.8), rgba(desaturate(adjust-hue($color-blue, -20deg), 40), 0.8), vertical);
   opacity: 0;
   .modal-component{
     width: 100%;
     max-width:320px;
-    height: 100%;
     margin: 0 auto;
     padding: 15px;
     border-radius: 6px;
@@ -254,7 +291,86 @@ body{
     }
     input:checked+label{
       color: #FFF;
-      background-color: desaturate($color-blue, 20);
+      background-color: $color-blue;
+    }
+  }
+}
+
+// menu
+.menu_bg{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  padding: 20px;
+  @include gradient(rgba(lighten(desaturate(adjust-hue($color-blue, -40deg), 30), 20), 0.8), rgba(desaturate(adjust-hue($color-blue, -10deg), 20), 0.8), vertical);
+  opacity: 0;
+}
+.menu_btn{
+  position: fixed;
+  left: 50%;
+  bottom: 15px;
+  z-index: 10;
+  transform: translateX(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+  background: #fff;
+  cursor: pointer;
+  i{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    font-size: 20px;
+  }
+  &.menu_item{
+    width: 50px;
+    height: 50px;
+    i{
+      font-size: 28px;
+    }
+    &::after{
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      text-align: center;
+      color: #FFF;
+    }
+  }
+  &[menu-shown]{
+    background: #fff;
+    color: $color-gray;
+  }
+  &--init{
+    @include gradient(rgba(lighten(desaturate(adjust-hue($color-blue, 0deg), 0), 0), 1), rgba(desaturate(adjust-hue($color-blue, -10deg), 20), 1), vertical);
+    color:#FFF;
+  }
+  &--create{
+    margin-bottom:30px;
+    margin-left:-80px;
+    color: adjust-hue($color-blue, -15deg);
+    &::after{
+      content:"Add";
+    }
+  }
+  &--deals{
+    margin-bottom:80px;
+    color: adjust-hue($color-blue, 0deg);
+    &::after{
+      content:"Deals";
+    }
+  }
+  &--configs{
+    margin-bottom:30px;
+    margin-left:80px;
+    color: adjust-hue($color-blue, 15deg);
+    &::after{
+      content:"Setting";
     }
   }
 }

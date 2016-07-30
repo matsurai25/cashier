@@ -1,0 +1,11 @@
+.items
+  template(v-for="item in items")
+    .item(:class="isAdded(item)", 
+      v-touch:tap="addCartItem(item)", 
+      v-touch:press="toggleCart(item)", 
+      v-touch:dualtap="destroyItem(item)")
+      img.thumb(:src="item.thumb", alt="", v-show="item.thumb")
+      .name {{item.name}}
+      .price.fa.fa-jpy {{item.price}}
+      .count.fa.fa-line-chart {{item.count}}
+      .added_count(v-if="countAddedItem(item)") {{countAddedItem(item)}}

@@ -5,7 +5,8 @@ model =
     items:[]
   state :
     modalContent: null
+    menu_f: false
   configs :
-    questionnaire_f: true
+    statistics_f: true
 
 module.exports = model

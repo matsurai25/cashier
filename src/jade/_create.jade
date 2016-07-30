@@ -1,0 +1,21 @@
+.createitem
+  h4 新規アイテム追加
+  section
+    h6 name
+    input.js-item-name(type="text", placeholder="タイトル")
+    .caption タイトル。文字数制限はないですがわかりやすものが良いかと。
+
+  section
+    h6 thumbnail
+    .thumb_image.js-show-thumb
+      img(src="", alt="")
+    input.js-image-upload(type="file", name='image', v-on:change="getDataUrl()")
+    input.js-item-thumb(type="hidden")
+    .caption サムネイルにしたい画像を登録してください。
+
+  section
+    h6 price
+    input.js-item-price(type="number", placeholder="1000")
+    .caption 半角数字で入力。コンマ等不要。
+  
+  .btn(v-on:click="createItem()") 追加する

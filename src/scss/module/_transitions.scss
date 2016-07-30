@@ -1,8 +1,26 @@
+.slideUp-transition {
+  @include transition(0.6, all, $easeOutCubic)
+  opacity: 1;
+}
+.slideUp-enter, .slideUp-leave {
+  transform: translateY(100%);
+  opacity: 0;
+}
 .fade-transition {
-  transition: all .3s ease;
-  @include transition(0.3, all, $easeInOut)
+  @include transition(0.3, all, $easeOutCubic)
   opacity: 1;
 }
 .fade-enter, .fade-leave {
   opacity: 0;
+}
+.pop-transition {
+  @include transition(0.3, all, $easeOutCubic)
+  opacity: 1;
+}
+.pop-enter, .pop-leave {
+  margin-bottom: 0;
+  margin-left: 0;
+  opacity: 0;
+  width: 44px;
+  height: 44px;
 }

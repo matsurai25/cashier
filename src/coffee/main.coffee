@@ -164,7 +164,7 @@ $ ->
           alert '何もついかされてないよ！'
           return
         # 質問フラグが立ってれば、アンケートに移行
-        if this.$data.configs.questionnaire_f
+        if this.$data.configs.statistics_f
           this.showStatisticsInput()
           return
         # 何もなければ即決済
@@ -314,4 +314,25 @@ $ ->
           return true
         $('body').removeAttr('style')
         return false
+
+      # statisticsが有効の時のみtrue
+      statistics_f: () ->
+        if this.$data.configs.statistics_f == true
+          return true
+        return false
+
+      # statisticsが有効の時のみtrue
+      menu_f: () ->
+        if this.$data.state.menu_f == true
+          $('body').css {
+            position: 'fixed',
+            top: -1 * $(window).scrollTop()
+          }
+          return true
+        $('body').removeAttr('style')
+        return false
+
+      # メニューを開く
+      toggleMenu: () ->
+        this.$data.state.menu_f = !this.$data.state.menu_f
   )

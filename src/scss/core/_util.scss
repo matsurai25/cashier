@@ -37,6 +37,39 @@
   }
 }
 
+@mixin gradient($start-color, $end-color, $orientation) {
+  background: $start-color;
+  @if $orientation == vertical{
+    // vertical
+    background: -moz-linear-gradient(top,  $start-color 0%, $end-color 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,$start-color), color-stop(100%,$end-color));
+    background: -webkit-linear-gradient(top,  $start-color 0%,$end-color 100%);
+    background: -o-linear-gradient(top,  $start-color 0%,$end-color 100%);
+    background: -ms-linear-gradient(top,  $start-color 0%,$end-color 100%);
+    background: linear-gradient(to bottom,  $start-color 0%,$end-color 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='$start-color', endColorstr='$end-color',GradientType=0 );
+  }
+  @else if $orientation == horizontal {
+    // horizontal
+    background: -moz-linear-gradient(left,  $start-color 0%, $end-color 100%);
+    background: -webkit-gradient(linear, left top, right top, color-stop(0%,$start-color), color-stop(100%,$end-color));
+    background: -webkit-linear-gradient(left,  $start-color 0%,$end-color 100%);
+    background: -o-linear-gradient(left,  $start-color 0%,$end-color 100%);
+    background: -ms-linear-gradient(left,  $start-color 0%,$end-color 100%);
+    background: linear-gradient(to right,  $start-color 0%,$end-color 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='$start-color', endColorstr='$end-color',GradientType=1 );
+  }
+  @else {
+    // radial
+    background: -moz-radial-gradient(center, ellipse cover,  $start-color 0%, $end-color 100%);
+    background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,$start-color), color-stop(100%,$end-color));
+    background: -webkit-radial-gradient(center, ellipse cover,  $start-color 0%,$end-color 100%);
+    background: -o-radial-gradient(center, ellipse cover,  $start-color 0%,$end-color 100%);
+    background: -ms-radial-gradient(center, ellipse cover,  $start-color 0%,$end-color 100%);
+    background: radial-gradient(ellipse at center,  $start-color 0%,$end-color 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='$start-color', endColorstr='$end-color',GradientType=1 );
+  }
+}
 
 // easing
 

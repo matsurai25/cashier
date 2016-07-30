@@ -15,64 +15,30 @@ html
         .fa.fa-jpy
         span.num {{cartPrice()}}
       .confirm(v-on:click="enterDealActions()")
-        |確定
+        | 会計
 
-    .items
-      template(v-for="item in items")
-        .item(:class="isAdded(item)", 
-          v-touch:tap="addCartItem(item)", 
-          v-touch:press="toggleCart(item)", 
-          v-touch:dualtap="destroyItem(item)")
-          img.thumb(:src="item.thumb", alt="", v-show="item.thumb")
-          .name {{item.name}}
-          .price.fa.fa-jpy {{item.price}}
-          .count.fa.fa-line-chart {{item.count}}
-          .added_count(v-if="countAddedItem(item)") {{countAddedItem(item)}}
+    include _items
 
-    .deals
-      table.deals__list
-        tr.deals__list__head
-          td
-          td.deals__list__price 
-            |{{earnings()}}
-          td
+    include _deals
 
-        tr.deal(v-for="deal in deals")
-          td
-            span {{dispTime(deal.created)}}
-          td.deals__list__price
-            span {{deal.price}}
-          td.deals__list__name
-            span(v-for="item_id in deal.items", track-by="$index")
-              {{findItem(item_id).name}}
-
-    .createitem
-      h4 新規アイテム追加
-      section
-        h6 name
-        input.js-item-name(type="text", placeholder="タイトル")
-        .caption タイトル。文字数制限はないですがわかりやすものが良いかと。
-
-      section
-        h6 thumbnail
-        .thumb_image.js-show-thumb
-          img(src="", alt="")
-        input.js-image-upload(type="file", name='image', v-on:change="getDataUrl()")
-        input.js-item-thumb(type="hidden")
-        .caption サムネイルにしたい画像を登録してください。
-
-      section
-        h6 price
-        input.js-item-price(type="number", placeholder="1000")
-        .caption 半角数字で入力。コンマ等不要。
-      
-      .btn(v-on:click="createItem()") 追加する
+    include _create
 
     .btn(v-on:click="setdummy()") ダミーを入れる
     .btn(v-on:click="initialize()") 初期化する
 
-    .modal(v-if="modal_f()", transition="fade")
-      //- component(:is="{{$this.state.modalContent}}")
+    .menu_btn.menu_btn--init.js-show-menu(v-on:click="toggleMenu()", menu-shown="{{menu_f()}}")
+      i.fa.fa-bars
+    .menu_btn.menu_item.menu_btn--create.js-show-menu(v-if="menu_f()", transition="pop")
+      i.fa.fa-plus
+    .menu_btn.menu_item.menu_btn--deals.js-show-menu(v-if="menu_f()", transition="pop")
+      i.fa.fa-table
+    .menu_btn.menu_item.menu_btn--configs.js-show-menu(v-if="menu_f()", transition="pop")
+      i.fa.fa-cog
+    .menu_bg(v-if="menu_f()", v-on:click="toggleMenu()", transition="fade")
+
+    // モーダルは全部これを通す
+    .modal(v-if="modal_f()", transition="slideUp")
       component.modal-component(:is="state.modalContent")
 
+    // テンプレートだけ
     include _statistics
