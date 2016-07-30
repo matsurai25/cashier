@@ -8,5 +8,6 @@
 - [x] サムネイル登録可能
 - [x] サーバーにデータは送信しない
 - [x] localStorage使って保存
+- [x] 購入者を集計(`age` `gender` `sample`)
 - [ ] 売上グラフ表示
 - [ ] json export

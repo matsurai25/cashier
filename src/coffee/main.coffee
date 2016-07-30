@@ -1,9 +1,19 @@
 $ = require 'jQuery'
 moment = require 'moment'
 Vue = require 'Vue'
-
-# タッチ操作を使いやすく
 VueTouch = require 'vue-touch'
+
+# データ系の関数
+store = require './store'
+store.log()
+
+if !store.getState()?
+  # store.init()
+  store.setDummy()
+
+
+# vueを拡張
+# タッチ操作を使いやすく
 VueTouch.registerCustomEvent('dualtap', {
   type: 'tap',
   pointers: 2
@@ -14,15 +24,22 @@ VueTouch.registerCustomEvent('tripletap', {
 })
 Vue.use VueTouch
 
-# データ系の関数
-store = require './store'
 
-if !store.getState()?
-  # store.init()
-  store.setDummy()
+Vue.component('modal-statistics', {
+  template: "#modal-statistics",
+})
+Vue.component('statistics-gender', {
+  template: "#statistics-gender",
+})
+Vue.component('statistics-age', {
+  template: "#statistics-age",
+})
+Vue.component('statistics-sample', {
+  template: "#statistics-sample",
+})
 
 $ ->
-  demo = new Vue(
+  window.vue = new Vue(
     el: '#vue'
     data:store.getState()
     methods:
@@ -140,10 +157,48 @@ $ ->
         item.count--
         this.save()
 
+      # 決済ボタンを押された時の挙動
+      enterDealActions: () ->
+        # 何もない時は追加しない
+        if this.cartPrice() == 0
+          alert '何もついかされてないよ！'
+          return
+        # 質問フラグが立ってれば、アンケートに移行
+        if this.$data.configs.questionnaire_f
+          this.showStatisticsInput()
+          return
+        # 何もなければ即決済
+        this.decide()
+
+      # アンケート表示
+      showStatisticsInput: () ->
+        # state.modalContentに値を入れると自動でモーダルが出る
+        this.$data.state.modalContent = 'modal-statistics'
+        $(document).on('click','.js-statistics-submit',this.submitStatisticsInput)
+
+      # アンケート確定
+      submitStatisticsInput: () ->
+        # 値取得
+        gender = $('input[name="gender"]:checked').val()
+        age    = $('input[name="age"]:checked').val()
+        sample = $('input[name="sample"]:checked').val()
+
+        # 送信イベントをオフ
+        $(document).off('click','.js-statistics-submit',this.submitStatisticsInput)
+
+        # アンケート情報をdealに含ませる
+        deal = this.$data.current
+        deal.statistics = {
+          gender:gender
+          age:age
+          sample:sample
+        }
+        # 決済に移行
+        this.$data.state.modalContent = null
+        this.decide(deal)
+
       # 決済する
-      decide: () ->
-        return if this.cartPrice() == 0 # 何もない時は追加しない
-        deal =  this.$data.current
+      decide: (deal = this.$data.current) ->
         deal.created = moment().format("YYYY-MM-DD HH:mm:ss")
         deal.price = this.cartPrice()
         this.$data.deals.unshift($.extend({}, deal))
@@ -248,4 +303,10 @@ $ ->
         if window.confirm("初期化し、ダミーをセットします。よろしいですか？")
           store.setDummy()
           location.reload()
+
+      # stateのモーダルコンテントが存在するなら、モーダルを表示
+      modal_f: () ->
+        if this.$data.state.modalContent?
+          return true
+        return false
   )

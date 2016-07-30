@@ -47,7 +47,7 @@ gulp.task 'build:scss', ->
 
 gulp.task 'build:jade', ->
   # index以外のjadeファイルは/c/以下に
-  gulp.src(['src/jade/**/*.jade'])
+  gulp.src(['src/jade/**/*.jade','!src/jade/**/_*.jade'])
     .pipe(plumber())
     .pipe(jade({
       basedir: __dirname+"/src/jade/"

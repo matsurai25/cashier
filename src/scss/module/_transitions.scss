@@ -1,0 +1,7 @@
+.fade-transition {
+  transition: all .3s ease;
+  @include transition(0.3, all, $easeInOut)
+}
+.fade-enter, .fade-leave {
+  opacity: 0;
+}

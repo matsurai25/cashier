@@ -14,7 +14,7 @@ html
       .price
         .fa.fa-jpy
         span.num {{cartPrice()}}
-      .confirm(v-on:click="decide()")
+      .confirm(v-on:click="enterDealActions()")
         |確定
 
     .items
@@ -68,8 +68,11 @@ html
       
       .btn(v-on:click="createItem()") 追加する
 
-    .removeitem
+    .btn(v-on:click="setdummy()") ダミーを入れる
+    .btn(v-on:click="initialize()") 初期化する
 
+    .modal(v-if="modal_f()", transition="fade")
+      //- component(:is="{{$this.state.modalContent}}")
+      component.modal-component(:is="state.modalContent")
 
-  .btn(v-on:click="setdummy()") ダミーを入れる
-  .btn(v-on:click="initialize()") 初期化する
+    include _statistics

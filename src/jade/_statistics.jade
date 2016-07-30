@@ -1,0 +1,47 @@
+template#modal-statistics
+  div
+    h5 購入者参考情報入力
+    // 各コンポーネントを出力
+    statistics-gender
+    statistics-age
+    statistics-sample
+    // 送信
+    .btn.js-statistics-submit 送信
+    
+
+template#statistics-gender
+  .form-group
+    h6 おおよその性別
+    .flex
+      input#gender_man(type="radio", name="gender", value="man", checked="true")
+      label(for="gender_man") 男性
+      input#gender_woman(type="radio", name="gender", value="woman")
+      label(for="gender_woman") 女性
+      // デフォルト
+      input(type="radio", name="gender", value="", checked="true")
+  
+template#statistics-age
+  .form-group
+    h6 おおよその年齢
+    .flex
+      input#age_10(type="radio", name="age", value="10")
+      label(for="age_10") 10代
+      input#age_20(type="radio", name="age", value="20")
+      label(for="age_20") 20代
+      input#age_30(type="radio", name="age", value="30")
+      label(for="age_30") 30-40代
+      input#age_50(type="radio", name="age", value="50")
+      label(for="age_50") 50代以上
+      // デフォルト
+      input(type="radio", name="age", value="", checked="true")
+
+template#statistics-sample
+  .form-group
+    h6 その場でサンプルを見てから判断していた
+    .flex
+      input#sample_on(type="radio", name="sample", value="yes", checked="true")
+      label(for="sample_on") YES
+      input#sample_off(type="radio", name="sample", value="no")
+      label(for="sample_off") NO
+      // デフォルト
+      input(type="radio", name="sample", value="", checked="true")
