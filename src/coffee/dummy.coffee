@@ -70,4 +70,6 @@ dummy =
   configs :
     statistics_f: true
 
+dummy.appinfo = require './appinfo'
+
 module.exports = dummy

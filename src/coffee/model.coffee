@@ -10,4 +10,6 @@ model =
   configs :
     statistics_f: true
 
+model.appinfo = require './appinfo'
+
 module.exports = model

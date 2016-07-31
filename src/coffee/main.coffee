@@ -3,13 +3,15 @@ moment = require 'moment'
 Vue = require 'Vue'
 VueTouch = require 'vue-touch'
 
-# データ系の関数
 store = require './store'
-store.log()
-
 toast = require './toast'
 
 if !store.getState()?
+  # store.init()
+  store.setDummy()
+
+# 開発用
+if !store.getState().appinfo?
   # store.init()
   store.setDummy()
 
@@ -417,10 +419,10 @@ $ ->
 
 
       # =================
-      #       configs
+      #     configs
       # =================
 
-      # メニューを閉じて引数のモーダルを開く
+      # コンフィグの内容を更新
       changeConfig: (key, value) ->
         this.$data.configs[key] = value
         this.save()

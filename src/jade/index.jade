@@ -29,7 +29,9 @@ html
       i.fa.fa-table
     .menu_btn.menu_item.menu_btn--configs.js-show-menu(v-if="menu_f()", transition="pop", v-on:click="segue('modal-configs')")
       i.fa.fa-cog
-    .menu_bg(v-if="menu_f()", transition="fade")
+    .menu(v-if="menu_f()", transition="fade")
+      include _dashboard
+
 
     // モーダルは全部これを通す
     .modal(v-if="modal_f()", transition="fade", modal-content="{{state.modalContent}}")
