@@ -56,6 +56,11 @@ $ ->
     el: '#vue'
     data:store.getState()
     methods:
+
+      # =================
+      #      util
+      # =================
+
       # 保存
       save: () ->
         store.setState(this.$data)
@@ -70,6 +75,24 @@ $ ->
       # 現在時刻を表示
       dispTime: (timestamp) ->
         return moment(timestamp).format("HH時mm分")
+
+      # 初期化
+      initialize: () ->
+        if window.confirm("初期化します。よろしいですか？")
+          store.init()
+          location.reload()
+
+      # ダミーで上書き
+      setdummy: () ->
+        if window.confirm("初期化し、ダミーをセットします。よろしいですか？")
+          store.setDummy()
+          location.reload()
+
+
+
+      # =================
+      #      create
+      # =================
 
       # アイテムを新規追加
       createItem: () ->
@@ -151,6 +174,11 @@ $ ->
             .find('img').attr('src', dataUrl)
 
 
+
+      # =================
+      #      item
+      # =================
+
       # idからアイテムを探す
       findItem: (item_id) ->
         items =  this.$data.items
@@ -170,57 +198,6 @@ $ ->
         item.count--
         this.save()
 
-      # 決済ボタンを押された時の挙動
-      enterDealActions: () ->
-        # 何もない時は追加しない
-        if this.cartPrice() == 0
-          toast.show("何も選択されてないです！",'warning')
-          return
-        # 質問フラグが立ってれば、アンケートに移行
-        if this.$data.configs.statistics_f
-          this.showStatisticsInput()
-          return
-        # 何もなければ即決済
-        this.decide()
-
-      # アンケート表示
-      showStatisticsInput: () ->
-        # state.modalContentに値を入れると自動でモーダルが出る
-        this.$data.state.modalContent = 'modal-statistics'
-
-      # アンケート確定
-      submitStatisticsInput: () ->
-        # 値取得
-        gender = $('input[name="gender"]:checked').val()
-        age    = $('input[name="age"]:checked').val()
-        sample = $('input[name="sample"]:checked').val()
-
-        # アンケート情報をdealに含ませる
-        deal = this.$data.current
-        deal.statistics = {
-          gender:gender
-          age:age
-          sample:sample
-        }
-        # 決済に移行
-        this.$data.state.modalContent = null
-        this.decide(deal)
-
-      # 決済する
-      decide: (deal = this.$data.current) ->
-        deal.created = moment().format("YYYY-MM-DD HH:mm:ss")
-        deal.price = this.cartPrice()
-        deal.items.sort (a,b) ->
-          return a - b
-        this.$data.deals.unshift($.extend({}, deal))
-        # 各アイテムの販売数を増やす
-        for item_id in deal.items
-          this.increseItemCount(item_id)
-        this.clearCart()
-        this.save()
-        toast.show("保存しました")
-
-
       # カート内のアイテムの値段の合計
       cartPrice: () ->
         price = 0
@@ -230,15 +207,6 @@ $ ->
           if item?
             price += Number(item.price)
         return price
-
-      # 合計売上
-      earnings: () ->
-        eaning = 0
-        deals =  this.$data.deals
-        for deal in deals
-          if deal.price?
-            eaning += deal.price
-        return eaning
 
       # カート内のアイテムを全て削除
       clearCart: () ->
@@ -305,23 +273,94 @@ $ ->
         this.save()
         location.reload()
 
+
+
+      # =================
+      #      decide
+      # =================
+
+      # statisticsが有効の時のみtrue
+      statistics_f: () ->
+        if this.$data.configs.statistics_f == true
+          return true
+        return false
+
+      # 決済ボタンを押された時の挙動
+      enterDealActions: () ->
+        # 何もない時は追加しない
+        if this.cartPrice() == 0
+          toast.show("何も選択されてないです！",'warning')
+          return
+        # 質問フラグが立ってれば、アンケートに移行
+        if this.$data.configs.statistics_f
+          this.showStatisticsInput()
+          return
+        # 何もなければ即決済
+        this.decide()
+
+      # アンケート表示
+      showStatisticsInput: () ->
+        # state.modalContentに値を入れると自動でモーダルが出る
+        this.$data.state.modalContent = 'modal-statistics'
+
+      # アンケート確定
+      submitStatisticsInput: () ->
+        # 値取得
+        gender = $('input[name="gender"]:checked').val()
+        age    = $('input[name="age"]:checked').val()
+        sample = $('input[name="sample"]:checked').val()
+
+        # アンケート情報をdealに含ませる
+        deal = this.$data.current
+        deal.statistics = {
+          gender:gender
+          age:age
+          sample:sample
+        }
+        # 決済に移行
+        this.$data.state.modalContent = null
+        this.decide(deal)
+
+      # 決済する
+      decide: (deal = this.$data.current) ->
+        deal.created = moment().format("YYYY-MM-DD HH:mm:ss")
+        deal.price = this.cartPrice()
+        deal.items.sort (a,b) ->
+          return a - b
+        this.$data.deals.unshift($.extend({}, deal))
+        # 各アイテムの販売数を増やす
+        for item_id in deal.items
+          this.increseItemCount(item_id)
+        this.clearCart()
+        this.save()
+        toast.show("保存しました")
+
+
+
+      # =================
+      #      deals
+      # =================
+
+      # 合計売上
+      earnings: () ->
+        eaning = 0
+        deals =  this.$data.deals
+        for deal in deals
+          if deal.price?
+            eaning += deal.price
+        return eaning
+
       # 配列内の同じ要素の数を返す
       countItemInItems: (item_ids, item_id) ->
         return item_ids.filter((id)->
           id == item_id
         ).length
 
-      # 初期化
-      initialize: () ->
-        if window.confirm("初期化します。よろしいですか？")
-          store.init()
-          location.reload()
 
-      # ダミーで上書き
-      setdummy: () ->
-        if window.confirm("初期化し、ダミーをセットします。よろしいですか？")
-          store.setDummy()
-          location.reload()
+
+      # =================
+      #      modal
+      # =================
 
       # stateのモーダルコンテントが存在するなら、モーダルを表示
       modal_f: () ->
@@ -334,17 +373,17 @@ $ ->
         $('body').removeAttr('style')
         return false
 
-      # statisticsが有効の時のみtrue
-      statistics_f: () ->
-        if this.$data.configs.statistics_f == true
-          return true
-        return false
-
-      # statisticsが有効の時のみtrue
+      # モーダルを隠す
       hideModal: () ->
         this.$data.state.modalContent = null
 
-      # statisticsが有効の時のみtrue
+
+
+      # =================
+      #       menu
+      # =================
+
+      # メニュー表示中のフラグ
       menu_f: () ->
         if this.$data.state.menu_f == true
           if this.$data.state.currentScroll == null
@@ -362,12 +401,13 @@ $ ->
 
         return false
 
-      # メニューを開く
+      # メニューを開閉
       toggleMenu: () ->
         this.$data.state.menu_f = !this.$data.state.menu_f
 
-      # メニューを閉じて次を開く
+      # メニューを閉じて引数のモーダルを開く
       segue: (modalContent) ->
         this.$data.state.menu_f = false
         this.$data.state.modalContent = modalContent
+
   )
