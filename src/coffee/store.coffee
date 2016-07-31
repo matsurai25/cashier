@@ -1,7 +1,13 @@
+$ = require 'jQuery'
+model = require './model'
+dummy = require './dummy'
+
 store =
   config:
     app_name:'cashier'
   setState: (data) ->
+    data = $.extend({}, data)
+    data.state = model.state
     localStorage.setItem store.config.app_name,JSON.stringify data
   # 対象を比較して構造を維持したままマージする
   mergeState: (data) ->
@@ -19,12 +25,10 @@ store =
     console.log store.getState()
   setDummy:->
     console.log 'setDummy'
-    dummy = require './dummy'
     store.setState dummy
     # console.log store.getState()
   init:->
     console.log 'init'
-    model = require './model'
     store.setState model
     console.log "初期化しました"
     # console.log store.getState()

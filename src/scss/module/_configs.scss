@@ -1,0 +1,16 @@
+.configs{
+  .config{
+    display: flex;
+    &__name{
+      text-align: left;
+      flex-grow: 1;
+      font-size: 12px;
+      line-height: 26px;
+    }
+    &__switch{
+      flex-grow: 1;
+      flex-basis: 50px;
+      text-align: right;
+    }
+  }
+}

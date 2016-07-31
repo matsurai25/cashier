@@ -63,6 +63,10 @@ $ ->
 
       # 保存
       save: () ->
+        # stateの内容は保存しない
+        # data =  $.extend({}, this.$data)
+        # data.state
+        # store.setState(data)
         store.setState(this.$data)
 
       # 現在の使用容量
@@ -333,7 +337,7 @@ $ ->
           this.increseItemCount(item_id)
         this.clearCart()
         this.save()
-        toast.show("保存しました")
+        toast.show("保存しました！")
 
 
 
@@ -409,5 +413,17 @@ $ ->
       segue: (modalContent) ->
         this.$data.state.menu_f = false
         this.$data.state.modalContent = modalContent
+
+
+
+      # =================
+      #       configs
+      # =================
+
+      # メニューを閉じて引数のモーダルを開く
+      changeConfig: (key, value) ->
+        this.$data.configs[key] = value
+        this.save()
+
 
   )
