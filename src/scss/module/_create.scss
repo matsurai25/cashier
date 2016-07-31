@@ -1,0 +1,48 @@
+.create{
+  padding: 15px;
+  background-color: $color-black;
+  color: #FFF;
+  section{
+    margin-bottom: 15px;
+  }
+  h4{
+    padding-bottom: 15px;
+    text-align: center;
+    font-weight: normal;
+    font-size: 18px;
+  }
+  h6{
+    font-weight: normal;
+    font-size: 14px;
+    padding-bottom: 5px;
+  }
+  input[type="text"],input[type="number"]{
+    width: 100%;
+    padding: 5px;
+    font-size: 14px;
+    color: $color-black;
+    border: none;
+    border-radius: 3px;
+  }
+  .caption{
+    opacity: 0.5;
+    padding: 3px;
+    line-height: 14px;
+    font-size: 10px;
+  }
+  .btn{
+    background-color: $color-green;
+    color: $color-black;
+  }
+  .thumb_image{
+    display: none;
+    width: 140px;
+    height: 140px;
+    margin: 0 auto;
+    img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+}

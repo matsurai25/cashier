@@ -1,0 +1,75 @@
+.items{
+  padding: 5px 15px;
+  padding-right: 5px;
+  font-size: 0;
+  .item{
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+    width: 140px;
+    height: 140px;
+    padding: 2px;
+    margin-bottom: 10px;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+    background-color: $color-white;
+    margin-right: 10px;
+    img.thumb{
+      font-size: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .fa:before{
+      padding-right: 3px;
+    }
+    .name{
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      padding: 5px;
+      background-color: #F2F2F2;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      font-size: 10px;
+      color: $color-black;
+    }
+    .price{
+      position: absolute;
+      left: 0;
+      top: 0;
+      padding: 5px;
+      background-color: #F2F2F2;
+      font-size: 8px;
+      color: $color-black;
+    }
+    .count{
+      position: absolute;
+      right: 0;
+      top: 0;
+      padding: 5px;
+      background-color: #F2F2F2;
+      font-size: 8px;
+      color: $color-black;
+    }
+    &.added{
+      background-color: $color-blue;
+      .thumb{
+        opacity: 0.7;
+      }
+      .name,.price,.count{
+        background-color: $color-blue;
+        color: #FFF;
+      }
+    }
+    .added_count{
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-50%);
+      font-size: 40px;
+      color: #FFF;
+    }
+  }
+}

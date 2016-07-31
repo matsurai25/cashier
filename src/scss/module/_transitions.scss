@@ -1,9 +1,9 @@
 .slideUp-transition {
-  @include transition(0.6, all, $easeOutCubic)
+  @include transition(0.5, all, $easeOutCubic)
   opacity: 1;
 }
 .slideUp-enter, .slideUp-leave {
-  transform: translateY(100%);
+  transform: translateY(50%);
   opacity: 0;
 }
 .fade-transition {

@@ -1,0 +1,20 @@
+@include keyframes(ToastfadeIn) {
+  0% {
+    margin-bottom: -35px;
+    opacity: 0;
+  }
+  100% {
+    margin-bottom: 0px;
+    opacity: 1;
+  }
+}
+@include keyframes(ToastfadeOut) {
+  0% {
+    transform: translateY(0%);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}

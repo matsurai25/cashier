@@ -7,6 +7,8 @@ VueTouch = require 'vue-touch'
 store = require './store'
 store.log()
 
+toast = require './toast'
+
 if !store.getState()?
   # store.init()
   store.setDummy()
@@ -23,21 +25,33 @@ VueTouch.registerCustomEvent('tripletap', {
 })
 Vue.use VueTouch
 
-# コンポーネントの登録
-Vue.component('modal-statistics', {
-  template: "#modal-statistics",
-})
-Vue.component('statistics-gender', {
-  template: "#statistics-gender",
-})
-Vue.component('statistics-age', {
-  template: "#statistics-age",
-})
-Vue.component('statistics-sample', {
-  template: "#statistics-sample",
-})
+window.vue = null
 
 $ ->
+  # コンポーネントの登録
+  Vue.component('modal-statistics', {
+    template: "#modal-statistics",
+  })
+  Vue.component('modal-create', {
+    template: "#modal-create"
+  })
+  Vue.component('modal-deals', {
+    template: "#modal-deals"
+  })
+  Vue.component('modal-configs', {
+    template: "#modal-configs"
+  })
+
+  Vue.component('statistics-gender', {
+    template: "#statistics-gender",
+  })
+  Vue.component('statistics-age', {
+    template: "#statistics-age",
+  })
+  Vue.component('statistics-sample', {
+    template: "#statistics-sample",
+  })
+
   window.vue = new Vue(
     el: '#vue'
     data:store.getState()
@@ -60,9 +74,9 @@ $ ->
       # アイテムを新規追加
       createItem: () ->
         id = moment().format("YYYYMMDDHHmmss")
-        name = $(".createitem .js-item-name").val()
-        thumb = $(".createitem .js-item-thumb").val()
-        price = $(".createitem .js-item-price").val()
+        name = $(".create .js-item-name").val()
+        thumb = $(".create .js-item-thumb").val()
+        price = $(".create .js-item-price").val()
         if name.length == 0
           alert "項目名を入力してください"
           return false
@@ -80,16 +94,15 @@ $ ->
           count: 0
         }
         this.$data.items.push item
+        this.$data.state.modalContent = null
         this.save()
-        $('body,html').animate({
-          scrollTop: 0
-        }, 500)
+        toast.show('アイテムを追加しました','success')
 
       # ファイル選択時に実行
       getDataUrl: () ->
         # 画像をエンコード
         _this = this
-        files = $(".createitem .js-image-upload").prop('files')
+        files = $(".create .js-image-upload").prop('files')
         if files.length == 0
           console.log 'ファイル選択してない！'
         else
@@ -133,8 +146,8 @@ $ ->
           # 画像をセットしてデータURLにして返す
           canvas.getContext("2d").drawImage(image, 0, 0, new_width, new_height)
           dataUrl =  canvas.toDataURL("image/jpeg", 0.4)
-          $(".createitem .js-item-thumb").val(dataUrl)
-          $(".createitem .js-show-thumb").show()
+          $(".create .js-item-thumb").val(dataUrl)
+          $(".create .js-show-thumb").show()
             .find('img').attr('src', dataUrl)
 
 
@@ -161,7 +174,7 @@ $ ->
       enterDealActions: () ->
         # 何もない時は追加しない
         if this.cartPrice() == 0
-          alert '何もついかされてないよ！'
+          toast.show("何も選択されてないです！",'warning')
           return
         # 質問フラグが立ってれば、アンケートに移行
         if this.$data.configs.statistics_f
@@ -174,7 +187,6 @@ $ ->
       showStatisticsInput: () ->
         # state.modalContentに値を入れると自動でモーダルが出る
         this.$data.state.modalContent = 'modal-statistics'
-        $(document).on('click','.js-statistics-submit',this.submitStatisticsInput)
 
       # アンケート確定
       submitStatisticsInput: () ->
@@ -182,9 +194,6 @@ $ ->
         gender = $('input[name="gender"]:checked').val()
         age    = $('input[name="age"]:checked').val()
         sample = $('input[name="sample"]:checked').val()
-
-        # 送信イベントをオフ
-        $(document).off('click','.js-statistics-submit',this.submitStatisticsInput)
 
         # アンケート情報をdealに含ませる
         deal = this.$data.current
@@ -201,12 +210,16 @@ $ ->
       decide: (deal = this.$data.current) ->
         deal.created = moment().format("YYYY-MM-DD HH:mm:ss")
         deal.price = this.cartPrice()
+        deal.items.sort (a,b) ->
+          return a - b
         this.$data.deals.unshift($.extend({}, deal))
         # 各アイテムの販売数を増やす
         for item_id in deal.items
           this.increseItemCount(item_id)
         this.clearCart()
         this.save()
+        toast.show("保存しました")
+
 
       # カート内のアイテムの値段の合計
       cartPrice: () ->
@@ -292,6 +305,12 @@ $ ->
         this.save()
         location.reload()
 
+      # 配列内の同じ要素の数を返す
+      countItemInItems: (item_ids, item_id) ->
+        return item_ids.filter((id)->
+          id == item_id
+        ).length
+
       # 初期化
       initialize: () ->
         if window.confirm("初期化します。よろしいですか？")
@@ -322,17 +341,33 @@ $ ->
         return false
 
       # statisticsが有効の時のみtrue
+      hideModal: () ->
+        this.$data.state.modalContent = null
+
+      # statisticsが有効の時のみtrue
       menu_f: () ->
         if this.$data.state.menu_f == true
-          $('body').css {
-            position: 'fixed',
-            top: -1 * $(window).scrollTop()
-          }
+          if this.$data.state.currentScroll == null
+            this.$data.state.currentScroll = $(window).scrollTop()
+            $('body').css {
+              position: 'fixed',
+              top: -1 * this.$data.state.currentScroll
+            }
           return true
-        $('body').removeAttr('style')
+        if this.$data.state.currentScroll != null
+          currentScroll = this.$data.state.currentScroll
+          this.$data.state.currentScroll = null
+          $('body').removeAttr('style')
+          window.scrollTo(0,currentScroll)
+
         return false
 
       # メニューを開く
       toggleMenu: () ->
         this.$data.state.menu_f = !this.$data.state.menu_f
+
+      # メニューを閉じて次を開く
+      segue: (modalContent) ->
+        this.$data.state.menu_f = false
+        this.$data.state.modalContent = modalContent
   )

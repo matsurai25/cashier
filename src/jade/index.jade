@@ -10,6 +10,7 @@ html
     meta(name="apple-mobile-web-app-status-bar-style", content="black-translucent")
 
   body#vue
+    .toasts
     .result
       .price
         .fa.fa-jpy
@@ -17,28 +18,28 @@ html
       .confirm(v-on:click="enterDealActions()")
         | 会計
 
-    include _items
-
-    include _deals
-
-    include _create
-
-    .btn(v-on:click="setdummy()") ダミーを入れる
-    .btn(v-on:click="initialize()") 初期化する
+    //- .btn(v-on:click="setdummy()") ダミーを入れる
+    //- .btn(v-on:click="initialize()") 初期化する
 
     .menu_btn.menu_btn--init.js-show-menu(v-on:click="toggleMenu()", menu-shown="{{menu_f()}}")
       i.fa.fa-bars
-    .menu_btn.menu_item.menu_btn--create.js-show-menu(v-if="menu_f()", transition="pop")
+    .menu_btn.menu_item.menu_btn--create.js-show-menu(v-if="menu_f()", transition="pop", v-on:click="segue('modal-create')")
       i.fa.fa-plus
-    .menu_btn.menu_item.menu_btn--deals.js-show-menu(v-if="menu_f()", transition="pop")
+    .menu_btn.menu_item.menu_btn--deals.js-show-menu(v-if="menu_f()", transition="pop", v-on:click="segue('modal-deals')")
       i.fa.fa-table
-    .menu_btn.menu_item.menu_btn--configs.js-show-menu(v-if="menu_f()", transition="pop")
+    .menu_btn.menu_item.menu_btn--configs.js-show-menu(v-if="menu_f()", transition="pop", v-on:click="segue('modal-configs')")
       i.fa.fa-cog
-    .menu_bg(v-if="menu_f()", v-on:click="toggleMenu()", transition="fade")
+    .menu_bg(v-if="menu_f()", transition="fade")
 
     // モーダルは全部これを通す
-    .modal(v-if="modal_f()", transition="slideUp")
-      component.modal-component(:is="state.modalContent")
+    .modal(v-if="modal_f()", transition="fade", modal-content="{{state.modalContent}}")
+      component.modal-component(:is="state.modalContent",v-if="modal_f()" , transition="slideUp")
+      .menu_btn(v-if="modal_f()", transition="fade", v-on:click="hideModal()")
+        i.fa.fa-times
 
     // テンプレートだけ
     include _statistics
+    include _items
+    include _deals
+    include _create
+    include _configs

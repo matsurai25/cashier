@@ -1,0 +1,75 @@
+.deals{
+  &__list{
+    width: 100%;
+    border-collapse: collapse;
+    tr.deal{
+      background-color: #fff;
+    }
+    td{
+      white-space: nowrap;
+      padding: 5px;
+      border: 1px solid $color-gray;
+    }
+    &__head{
+      background-color: $color-gray;
+      color: $color-white;
+      white-space: nowrap;
+    }
+    &__price{
+      text-align: right;
+      .fa{
+        padding-right: 3px;
+      }
+    }
+    &__name{
+      white-space:normal !important;
+      >span{
+        display: inline-block;
+        margin: 3px;
+        padding: 3px;
+        background-color: #F2F2F2;
+        >span {
+          display: inline-block;
+          padding: 3px 5px;
+          margin: -3px;
+          margin-right: 4px;
+          background-color: $color-black;
+          color: #FFF;
+        }
+      }
+    }
+    &__statistics{
+      span::after{
+        display: inline-block;
+        padding: 2px 4px;
+        background-color: #EFEFEF;
+        white-space: nowrap;
+        text-align: center;
+        font-size: 10px;
+        color: $color-black;
+      }
+      .deal-statistics-gender[data='man']::after{
+        content:'男';
+        background-color: lighten(desaturate($color-blue, 40), 10);
+        color: #FFF;
+      }
+      .deal-statistics-gender[data='woman']::after{
+        content:'女';
+        background-color: lighten(desaturate($color-red, 40), 10);
+        color: #FFF;
+      }
+      span[data='10']::after{
+        content:'10';
+      }
+      span[data='20']::after{
+        content:'20';
+      }
+      span[data='30']::after{
+        content:'30';
+      }
+      span[data='50']::after{
+        content:'50';
+      }
+    }
+  }
+}

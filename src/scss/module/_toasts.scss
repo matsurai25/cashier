@@ -1,0 +1,32 @@
+.toasts{
+  position: fixed;
+  left: 50%;
+  bottom: 65px;
+  z-index: 12;
+  transform: translateX(-50%);
+  font-size: 0;
+  text-align: center;
+  .toast{
+    display: inline-block;
+    clear: both;
+    margin-top: 3px;
+    padding: 10px;
+    border-radius: 3px;
+    background-color: rgba($color-black,0.8);
+    text-align: center;
+    font-size: 10px;
+    color: #FFF;
+    @include animation(ToastfadeIn, 0.8, $easeOutCubic, 0);
+    &.out{
+      @include animation(ToastfadeOut, 0.8, $easeOutCubic, 0);
+    }
+    &.warning{
+      @include gradient(rgba(lighten(desaturate(adjust-hue($color-blue, -40deg), 30), 20), 1), rgba(lighten(desaturate(adjust-hue($color-blue, -10deg), 20), 20), 1), horizontal);
+      filter: hue-rotate(240deg);
+    }
+    &.success{
+      @include gradient(rgba(lighten(desaturate(adjust-hue($color-blue, -40deg), 30), 20), 1), rgba(desaturate(adjust-hue($color-blue, -10deg), 20), 1), horizontal);
+      filter: hue-rotate(-30deg);
+    }
+  }
+}

@@ -1,0 +1,79 @@
+.menu_bg{
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100vh;
+  padding: 20px;
+  @include gradient(rgba(lighten(desaturate(adjust-hue($color-blue, -40deg), 30), 20), 0.8), rgba(desaturate(adjust-hue($color-blue, -10deg), 20), 0.8), vertical);
+  opacity: 0;
+}
+.menu_btn{
+  position: fixed;
+  left: 50%;
+  bottom: 15px;
+  z-index: 10;
+  transform: translateX(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+  background: #fff;
+  cursor: pointer;
+  i{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    font-size: 20px;
+  }
+  &.menu_item{
+    width: 50px;
+    height: 50px;
+    i{
+      font-size: 28px;
+    }
+    &::after{
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      text-align: center;
+      color: #FFF;
+    }
+  }
+  &[menu-shown]{
+    background: #fff;
+    color: $color-gray;
+  }
+  &--init{
+    z-index: 15;
+    @include gradient(rgba(lighten(desaturate(adjust-hue($color-blue, 0deg), 0), 0), 1), rgba(desaturate(adjust-hue($color-blue, -10deg), 20), 1), vertical);
+    color:#FFF;
+  }
+  &--create{
+    margin-bottom:30px;
+    margin-left:-80px;
+    color: adjust-hue($color-blue, -15deg);
+    &::after{
+      content:"Add";
+    }
+  }
+  &--deals{
+    margin-bottom:80px;
+    color: adjust-hue($color-blue, 0deg);
+    &::after{
+      content:"Deals";
+    }
+  }
+  &--configs{
+    margin-bottom:30px;
+    margin-left:80px;
+    color: adjust-hue($color-blue, 15deg);
+    &::after{
+      content:"Setting";
+    }
+  }
+}
