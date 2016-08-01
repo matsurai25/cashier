@@ -12,5 +12,5 @@
 - [x] localStorage使って保存
 - [x] 購入者を集計(`age` `gender` `sample`)
 - [ ] ダッシュボード表示
-- [ ] 各種メニューを分ける
+- [x] 各種メニューを分ける
 - [ ] json export
