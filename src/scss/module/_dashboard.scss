@@ -1,6 +1,50 @@
 .dashboard{
-  text-align: center;
+  height: 300px;
+  width: 100%;
   color: #FFF;
-  padding-top: 40px;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.1)
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+  font-family: "jaf-domus-titling-web";
+  &__head{
+    height: 50px;
+    text-align: center;
+    h1{
+      font-weight: normal;
+      font-size: 22px;
+    }
+    h2{
+      transform: translateY(-10px);
+      font-weight: normal;
+      font-size: 12px;
+    }
+  }
+  &__content{
+    @include transition(0.3, all, $easeOutCubic)
+    height: 210px;
+    width: 100%;
+    white-space: nowrap;
+    font-size: 0;
+  }
+  &__container{
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    font-size: 12px;
+  }
+  &__pager{
+    margin-top: 10px;
+    height: 6px;
+    width: 100%;
+    text-align: center;
+    .page{
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: #fff;
+      opacity: 0.5;
+      &.on{
+        opacity: 1;
+      }
+    }
+  }
 }

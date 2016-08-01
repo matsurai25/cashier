@@ -6,7 +6,7 @@
   width: 100%;
   height: 100vh;
   padding: 20px;
-  @include gradient(rgba(lighten(desaturate(adjust-hue($color-blue, -40deg), 30), 20), 0.8), rgba(desaturate(adjust-hue($color-blue, -10deg), 20), 0.8), vertical);
+  @include gradient(rgba(lighten(desaturate(adjust-hue($color-blue, -40deg), 30), 20), 0.9), rgba(desaturate(adjust-hue($color-blue, -10deg), 20), 0.9), vertical);
   opacity: 0;
 }
 .menu_btn{

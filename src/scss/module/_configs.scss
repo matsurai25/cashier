@@ -1,16 +1,30 @@
 .configs{
+  section{
+    margin-bottom: 30px;
+  }
   .config{
     display: flex;
+    margin: 5px 0;
     &__name{
       text-align: left;
       flex-grow: 1;
       font-size: 12px;
       line-height: 26px;
     }
-    &__switch{
+    &__action{
       flex-grow: 1;
       flex-basis: 50px;
       text-align: right;
+      &__btn{
+        display: inline-block;
+        width: 40px;
+        height: 22px;
+        border-radius: 3px;
+        background-color: #DDD;
+        text-align: center;
+        line-height: 22px;
+        color: #FFF;
+      }
     }
   }
 }

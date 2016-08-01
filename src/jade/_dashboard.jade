@@ -1,16 +1,13 @@
-.dashboard
-  h1 {{$root.$data.appinfo.name}}
-  h2 v{{$root.$data.appinfo.version}}
-  p
-    | ここらへんに説明的な文章をいれる
-    br
-    | 簡単に使えるレジ的なものを目指して作ってます。
-    br
-    | サーバーにはデータアップロードとかしないので、ブラウザに保存されます
-    br
-    | グラフで見れるようにするなど、機能追加中。
-    br
-    | こういうの欲しいとかもあればぜひ
-    br
-    br
-    | 操作：タップで追加、長押しで解除、2本指で削除
+.dashboard(v-touch:swipeleft="$root.slideDashbordPanel('next')",v-touch:swipeRight="$root.slideDashbordPanel('prev')")
+  .dashboard__head
+    h1 {{$root.$data.appinfo.name}}
+    h2.tk v{{$root.$data.appinfo.version}}
+  .dashboard__content.js-dashboard-content
+    .dashboard__container.js-dashboard-container
+      | ないよういっこめ
+    .dashboard__container.js-dashboard-container
+      | ないようにこめ
+  .dashboard__pager.js-dashboard-pager
+    .page.on
+    .page
+  

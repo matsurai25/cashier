@@ -416,6 +416,33 @@ $ ->
         this.$data.state.menu_f = false
         this.$data.state.modalContent = modalContent
 
+      #
+      slideDashbordPanel: (orient) ->
+        $content = $('.js-dashboard-content')
+        $pager = $('.js-dashboard-pager')
+        $pages = $pager.find('.page')
+        index = $pages.index($pager.find('.page.on'))
+
+        movedIndex = null
+        if orient == 'next'
+          if index+1 >= $pages.length
+            # console.log "おおすぎ"
+            return
+          movedIndex = index+1
+        else if orient == 'prev'
+          if index == 0
+            # console.log "なさすぎ"
+            return
+          movedIndex = index-1
+        else
+          return
+        width = $content.width()
+        $pages.eq(index).removeClass('on')
+        $pages.eq(movedIndex).addClass('on')
+        $content.css({transform:"translateX(#{movedIndex*width*-1}px)"})
+
+
+        # console.log "hogehoge"
 
 
       # =================

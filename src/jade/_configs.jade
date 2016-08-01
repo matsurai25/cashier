@@ -1,12 +1,24 @@
 template#modal-configs
   .configs
-    .config
-      .config__name
-        | 購買者の情報を記録する
-      .config__switch
-        input#statistics_f.ui-switch(
-          type="checkbox",
-          checked="{{$root.$data.configs.statistics_f}}",
-          v-on:change="$root.changeConfig('statistics_f', !$root.$data.configs.statistics_f)"
-          )
-        label(for="statistics_f")
+    section
+      .config
+        .config__name
+          | 購買者の情報を記録する
+        .config__action
+          input#statistics_f.ui-switch(
+            type="checkbox",
+            checked="{{$root.$data.configs.statistics_f}}",
+            v-on:change="$root.changeConfig('statistics_f', !$root.$data.configs.statistics_f)"
+            )
+          label(for="statistics_f")
+    section
+      .config
+        .config__name
+          | 初期化する
+        .config__action
+          .config__action__btn(v-on:click="$root.initialize()") 実行
+      .config
+        .config__name
+          | ダミーを入れる
+        .config__action
+          .config__action__btn(v-on:click="$root.setdummy()") 実行
