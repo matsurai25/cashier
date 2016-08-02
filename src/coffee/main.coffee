@@ -2,18 +2,22 @@ $ = require 'jQuery'
 moment = require 'moment'
 Vue = require 'Vue'
 VueTouch = require 'vue-touch'
+d3 = require '../lib/d3.v3.min.js'
 
 store = require './store'
 toast = require './toast'
+appinfo = require './appinfo'
 
 if !store.getState()?
   # store.init()
   store.setDummy()
 
-# 開発用
-if !store.getState().appinfo?
+# 最新バージョンじゃない場合にアラート
+if store.getState().appinfo.version < appinfo.version
+  alert "デバッグありがとうございます。ブラウザに保存されているデータが最新版ではないようです。settingからダミーを入れるかデータを初期化してください。"
   # store.init()
-  store.setDummy()
+  # if window.confirm("ブラウザに保存されているデータが最新バージョンではないようです。更新しますか")
+  # store.setDummy()
 
 
 # タッチ操作を登録
@@ -81,6 +85,16 @@ $ ->
       # 現在時刻を表示
       dispTime: (timestamp) ->
         return moment(timestamp).format("HH時mm分")
+
+      # 数字をいい感じに
+      formatNumber: (num) ->
+        num = String(num)
+        if num.length > 5
+          return num.substr(0, num.length-3)+"k"
+        if num.length > 3
+          return num.substr(0, num.length-3)+','+num.substr(-3)
+        return num
+        # return moment(timestamp).format("HH時mm分")
 
       # 初期化
       initialize: () ->
@@ -354,7 +368,19 @@ $ ->
         for deal in deals
           if deal.price?
             eaning += deal.price
-        return eaning
+        return this.formatNumber(eaning)
+
+      # 累計取引回数
+      countDeals: () ->
+        return this.formatNumber(this.$data.deals.length)
+
+      # 累計取引アイテム数
+      countDealItems: () ->
+        count = 0
+        deals =  this.$data.deals
+        for deal in deals
+          count += deal.items.length
+        return this.formatNumber(count)
 
       # 配列内の同じ要素の数を返す
       countItemInItems: (item_ids, item_id) ->
@@ -410,13 +436,37 @@ $ ->
       # メニューを開閉
       toggleMenu: () ->
         this.$data.state.menu_f = !this.$data.state.menu_f
+        if this.$data.state.menu_f == true
+          # 別プロセスで無理やり描画させるよ
+          _this = this
+          setTimeout( ( ->
+            data = []
+            items =  _this.$data.items
+            for item in items
+              data.push
+                name:item.name
+                value:item.count
+            data.sort( (a,b) ->
+              if(a.value < b.value)
+                return 1
+              if(a.value > b.value)
+                return -1
+              return 0
+            )
+            _this.makeGraph(data,"summary-donut")
+          ), 10 )
 
       # メニューを閉じて引数のモーダルを開く
       segue: (modalContent) ->
         this.$data.state.menu_f = false
         this.$data.state.modalContent = modalContent
 
-      #
+
+      # =================
+      #     dashboard
+      # =================
+
+      # スライダー
       slideDashbordPanel: (orient) ->
         $content = $('.js-dashboard-content')
         $pager = $('.js-dashboard-pager')
@@ -442,9 +492,160 @@ $ ->
         $content.css({transform:"translateX(#{movedIndex*width*-1}px)"})
 
 
-        # console.log "hogehoge"
+      # 円グラフを書く
+      # data = [{name:"新刊",value:100}]
+      makeGraph: (data, targetClass) ->
+        return false if !data?
+
+        $(".#{targetClass}").html("")
+        console.log "draw"
+
+        # 横幅と高さ
+        size = $(".#{targetClass}").width()
+        radius = size / 2
+
+        names = []
+        data.forEach (x, i) ->
+          names.push(x.name)
+        console.log names
+
+        pointIsInArc = (pt, ptData, d3Arc) ->
+          # Center of the arc is assumed to be 0,0
+          # (pt.x, pt.y) are assumed to be relative to the center
+          r1 = arc.innerRadius()(ptData)
+          r2 = arc.outerRadius()(ptData)
+          theta1 = arc.startAngle()(ptData)
+          theta2 = arc.endAngle()(ptData)
+
+          dist = pt.x * pt.x + pt.y * pt.y
+          angle = Math.atan2(pt.x, -pt.y)
+
+          if angle < 0
+            angle = angle + Math.PI * 2
+
+          return (r1 * r1 <= dist) && (dist <= r2 * r2) &&
+                 (theta1 <= angle) && (angle <= theta2)
 
 
+        # 円弧の外径と内径を定義
+        arc = d3.svg.arc()
+            .outerRadius(radius - 10)
+            .innerRadius(0)
+        # パイを定義
+        pie = d3.layout.pie()
+            .sort(null)
+            .value (d) ->
+              return d.value
+
+        svg = d3.select(".#{targetClass}").append("svg")
+          .attr("width", size)
+          .attr("height", size)
+          .append("g")
+          .attr("transform", "translate(" + size / 2 + "," + size / 2 + ")")
+
+
+        # パイにデータを割り当て、パイを作成
+        g = svg.selectAll(".arc")
+          .data(pie(data))
+          .enter().append("g")
+          .attr("class", (d) ->
+            return "pie-"+names.indexOf(d.data.name)
+            )
+
+        # 円弧を指定
+        g.append("path")
+          .attr("d", arc)
+          .style("fill","none")
+          # .style("stroke","rgba(255,255,255,0.4)")
+          .style("stroke-width","1px")
+
+        # ラベルをパイに表示
+        g.append("text")
+          .attr("transform",  (d) ->
+            return "translate(" + arc.centroid(d) + ")"
+            )
+          .attr("dy", "-0.65em")
+          .style("text-anchor", "middle")
+          .style("font-size","0.9em")
+          .text( (d) ->
+            return d.data.name
+            )
+          .each( (d) ->
+            bb = this.getBBox()
+            center = arc.centroid(d)
+            topLeft = {
+              x : center[0] + bb.x,
+              y : center[1] + bb.y
+            }
+            topRight = {
+              x : topLeft.x + bb.width,
+              y : topLeft.y
+            }
+            bottomLeft = {
+              x : topLeft.x,
+              y : topLeft.y + bb.height
+            }
+            bottomRight = {
+              x : topLeft.x + bb.width,
+              y : topLeft.y + bb.height
+            }
+
+            d.visible = pointIsInArc(topLeft, d, arc) &&
+                       pointIsInArc(topRight, d, arc) &&
+                       pointIsInArc(bottomLeft, d, arc) &&
+                       pointIsInArc(bottomRight, d, arc)
+
+          )
+          .style('display', (d) ->
+            console.log d.visible
+            if d.visible == false
+              return "none"
+            return "block"
+          )
+        # 数値をパイに表示
+        g.append("text")
+          .attr("transform",  (d) ->
+            return "translate(" + arc.centroid(d) + ")"
+            )
+          .attr("dy", ".35em")
+          .style("text-anchor", "middle")
+          .text( (d) ->
+            return d.data.value
+            )
+          # .style("fill","rgba(255,255,255,0.4)")
+          .style("font-size","0.9em")
+          .each( (d) ->
+            bb = this.getBBox()
+            center = arc.centroid(d)
+            topLeft = {
+              x : center[0] + bb.x,
+              y : center[1] + bb.y
+            }
+            topRight = {
+              x : topLeft.x + bb.width,
+              y : topLeft.y
+            }
+            bottomLeft = {
+              x : topLeft.x,
+              y : topLeft.y + bb.height
+            }
+            bottomRight = {
+              x : topLeft.x + bb.width,
+              y : topLeft.y + bb.height
+            }
+
+            d.visible = pointIsInArc(topLeft, d, arc) &&
+                       pointIsInArc(topRight, d, arc) &&
+                       pointIsInArc(bottomLeft, d, arc) &&
+                       pointIsInArc(bottomRight, d, arc)
+
+          )
+          .style('display', (d) ->
+            console.log d.visible
+            if d.visible == false
+              return "none"
+            return "block"
+          )
       # =================
       #     configs
       # =================
@@ -453,6 +654,5 @@ $ ->
       changeConfig: (key, value) ->
         this.$data.configs[key] = value
         this.save()
-
 
   )

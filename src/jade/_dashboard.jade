@@ -4,7 +4,22 @@
     h2.tk v{{$root.$data.appinfo.version}}
   .dashboard__content.js-dashboard-content
     .dashboard__container.js-dashboard-container
-      | ないよういっこめ
+      .dashboard__summary
+        .summary
+          h6 visitor
+          span {{$root.countDeals()}}
+        .summary
+          h6 item
+          span {{$root.countDealItems()}}
+        .summary
+          h6 total
+          span {{$root.earnings()}}
+      .dashboard__summary
+        .summary
+          h6
+            |グラフ
+          .summary-donut
+
     .dashboard__container.js-dashboard-container
       | ないようにこめ
   .dashboard__pager.js-dashboard-pager

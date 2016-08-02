@@ -21,9 +21,6 @@ html
       .confirm(v-on:click="enterDealActions()")
         | 会計
 
-    //- .btn(v-on:click="setdummy()") ダミーを入れる
-    //- .btn(v-on:click="initialize()") 初期化する
-
     .menu_btn.menu_btn--init.js-show-menu(v-on:click="toggleMenu()", menu-shown="{{menu_f()}}")
       i.fa.fa-bars
     .menu_btn.menu_item.menu_btn--create.js-show-menu(v-if="menu_f()", transition="pop", v-on:click="segue('modal-create')")

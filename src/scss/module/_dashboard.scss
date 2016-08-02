@@ -31,7 +31,9 @@
     font-size: 12px;
   }
   &__pager{
-    margin-top: 10px;
+    position: absolute;
+    left: 0;
+    bottom: 170px;
     height: 6px;
     width: 100%;
     text-align: center;
@@ -44,6 +46,47 @@
       opacity: 0.5;
       &.on{
         opacity: 1;
+      }
+    }
+  }
+  &__summary{
+    display: flex;
+    margin-bottom: 20px;
+    .summary{
+      flex: 1;
+      h6{
+        margin-bottom: -10px;
+        transform: scale(0.7);
+        font-weight: normal;
+        font-size: 9px;
+      }
+      span{
+        font-size: 20px;
+        font-weight: normal;
+      }
+      .summary-donut{
+        text-align: center;
+        height: 200px;
+        width: 200px;
+        margin: 0 auto;
+        text{
+          fill: #FFFFFF;
+        }
+        path{
+          stroke: #FFFFFF;
+        }
+        g[class^="pie-"]{
+          opacity: 0;
+          transform: rotate(-30deg) scale(0);
+        }
+        @for $value from 0 through 20{
+          .pie-#{$value}{
+            @include animation(GraphIn, 0.6, $easeOutCubic, 0.2 * $value);
+            path{
+              fill: rgba(255,255,255,0.3 - (0.1 * $value)) !important;
+            }
+          }
+        }
       }
     }
   }
