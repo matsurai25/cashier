@@ -51,7 +51,7 @@
   }
   &__summary{
     display: flex;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     .summary{
       flex: 1;
       h6{
@@ -59,6 +59,11 @@
         transform: scale(0.7);
         font-weight: normal;
         font-size: 9px;
+      }
+      h5{
+        margin-bottom: -10px;
+        font-weight: normal;
+        font-size: 12px;
       }
       span{
         font-size: 20px;
@@ -83,7 +88,7 @@
           .pie-#{$value}{
             @include animation(GraphIn, 0.6, $easeOutCubic, 0.2 * $value);
             path{
-              fill: rgba(255,255,255,0.3 - (0.1 * $value)) !important;
+              fill: rgba(44, 212, 199, 0.7 - (0.15 * $value)) !important;
             }
           }
         }
