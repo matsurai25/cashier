@@ -13,11 +13,14 @@
     box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
     background-color: $color-white;
     margin-right: 10px;
-    img.thumb{
+    .thumb{
       font-size: 0;
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center center;
+      // object-fit: cover;
     }
     .fa:before{
       padding-right: 3px;

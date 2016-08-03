@@ -14,11 +14,10 @@ if !store.getState()?
 
 # 最新バージョンじゃない場合にアラート
 if store.getState().appinfo.version < appinfo.version
-  alert "デバッグありがとうございます。ブラウザに保存されているデータが最新版ではないようです。settingからダミーを入れるかデータを初期化してください。"
-  # store.init()
-  # if window.confirm("ブラウザに保存されているデータが最新バージョンではないようです。更新しますか")
-  # store.setDummy()
+  if window.confirm("デバッグありがとうございます。古いデータを消去し、ダミーデータを挿入します。")
+    store.setDummy()
 
+console.log JSON.stringify(store.getState())
 
 # タッチ操作を登録
 VueTouch.registerCustomEvent('dualtap', {
@@ -70,9 +69,6 @@ $ ->
       # 保存
       save: () ->
         # stateの内容は保存しない
-        # data =  $.extend({}, this.$data)
-        # data.state
-        # store.setState(data)
         store.setState(this.$data)
 
       # 現在の使用容量
@@ -188,7 +184,7 @@ $ ->
 
           # 画像をセットしてデータURLにして返す
           canvas.getContext("2d").drawImage(image, 0, 0, new_width, new_height)
-          dataUrl =  canvas.toDataURL("image/jpeg", 0.4)
+          dataUrl =  canvas.toDataURL("image/jpeg", 0.5)
           $(".create .js-item-thumb").val(dataUrl)
           $(".create .js-show-thumb").show()
             .find('img').attr('src', dataUrl)
@@ -438,23 +434,7 @@ $ ->
         this.$data.state.menu_f = !this.$data.state.menu_f
         if this.$data.state.menu_f == true
           # 別プロセスで無理やり描画させるよ
-          _this = this
-          setTimeout( ( ->
-            data = []
-            items =  _this.$data.items
-            for item in items
-              data.push
-                name:item.name
-                value:item.count
-            data.sort( (a,b) ->
-              if(a.value < b.value)
-                return 1
-              if(a.value > b.value)
-                return -1
-              return 0
-            )
-            _this.makeGraph(data,"summary-donut")
-          ), 10 )
+          this.preventDashboardGraph()
 
       # メニューを閉じて引数のモーダルを開く
       segue: (modalContent) ->
@@ -490,24 +470,106 @@ $ ->
         $pages.eq(index).removeClass('on')
         $pages.eq(movedIndex).addClass('on')
         $content.css({transform:"translateX(#{movedIndex*width*-1}px)"})
+        this.preventDashboardGraph()
+
+      # 現在アクティブな画面のグラフ要素を取得してmakeに投げる
+      preventDashboardGraph: ->
+        _this = this
+        setTimeout( ( ->
+          $content = $('.js-dashboard-content')
+          $pager = $('.js-dashboard-pager')
+          $pages = $pager.find('.page')
+          index = $pages.index($pager.find('.page.on'))
+          $activeContainer = $content.find('.js-dashboard-container').eq(index)
+
+          $activeContainer.find(".summary-donut").each((i,x)->
+            $x = $(x)
+            return if $x.hasClass('done')
+            $x.addClass("graph-#{moment().unix()}-#{i}").addClass('done')
+            # data-typeによって場合分け
+            data = []
+            switch $x.data('type')
+              when 'items'
+                items =  _this.$data.items
+                for item in items
+                  data.push
+                    name:item.name
+                    value:item.count
+                break
+              when 'genders'
+                deals =  _this.$data.deals
+                genders =
+                  man:0
+                  woman:0
+                for deal in deals
+                  if deal.statistics? && deal.statistics.gender?
+                    genders[deal.statistics.gender]++
+                for key, value of genders
+                  name = ''
+                  if key == 'man'
+                    name = '男性'
+                  else if key == 'woman'
+                    name = '女性'
+                  else
+                    continue
+                  data.push
+                    name:name
+                    value:value
+                break
+              when 'ages'
+                deals =  _this.$data.deals
+                ages =
+                  '10':0
+                  '20':0
+                  '30':0
+                  '50':0
+
+                for deal in deals
+                  if deal.statistics? && deal.statistics.age?
+                    ages[deal.statistics.age]++
+                for key, value of ages
+                  name = ''
+                  if key == '10'
+                    name = '10代'
+                  else if key == '20'
+                    name = '20代'
+                  else if key == '30'
+                    name = '30代-40代'
+                  else if key == '50'
+                    name = '50代以上'
+                  else
+                    continue
+                  data.push
+                    name:name
+                    value:value
+                break
+
+            data.sort( (a,b) ->
+              if(a.value < b.value)
+                return 1
+              if(a.value > b.value)
+                return -1
+              return 0
+            )
+            _this.makeGraph(data,'.'+$(x).attr('class').split(' ').join('.'))
+          )
+        ), 10 )
 
 
       # 円グラフを書く
       # data = [{name:"新刊",value:100}]
-      makeGraph: (data, targetClass) ->
+      makeGraph: (data, targetSelector) ->
         return false if !data?
 
-        $(".#{targetClass}").html("")
-        console.log "draw"
+        $("#{targetSelector}").html("")
 
         # 横幅と高さ
-        size = $(".#{targetClass}").width()
+        size = $("#{targetSelector}").width()
         radius = size / 2
 
         names = []
         data.forEach (x, i) ->
           names.push(x.name)
-        console.log names
 
         pointIsInArc = (pt, ptData, d3Arc) ->
           # Center of the arc is assumed to be 0,0
@@ -537,7 +599,7 @@ $ ->
             .value (d) ->
               return d.value
 
-        svg = d3.select(".#{targetClass}").append("svg")
+        svg = d3.select("#{targetSelector}").append("svg")
           .attr("width", size)
           .attr("height", size)
           .append("g")
@@ -597,7 +659,6 @@ $ ->
 
           )
           .style('display', (d) ->
-            console.log d.visible
             if d.visible == false
               return "none"
             return "block"
@@ -612,7 +673,6 @@ $ ->
           .text( (d) ->
             return d.data.value
             )
-          # .style("fill","rgba(255,255,255,0.4)")
           .style("font-size","0.9em")
           .each( (d) ->
             bb = this.getBBox()
@@ -641,7 +701,6 @@ $ ->
 
           )
           .style('display', (d) ->
-            console.log d.visible
             if d.visible == false
               return "none"
             return "block"

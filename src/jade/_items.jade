@@ -4,7 +4,7 @@
       v-touch:tap="addCartItem(item)", 
       v-touch:press="toggleCart(item)", 
       v-touch:dualtap="destroyItem(item)")
-      img.thumb(:src="item.thumb", alt="", v-show="item.thumb")
+      .thumb(v-bind:style="{ backgroundImage: 'url(' + item.thumb + ')' }", v-show="item.thumb")
       .name {{item.name}}
       .price.fa.fa-jpy {{item.price}}
       .count.fa.fa-line-chart {{item.count}}

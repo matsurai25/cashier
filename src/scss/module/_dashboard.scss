@@ -4,6 +4,7 @@
   color: #FFF;
   text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
   font-family: "jaf-domus-titling-web";
+  text-align: center;
   &__head{
     height: 50px;
     text-align: center;
@@ -26,19 +27,27 @@
   }
   &__container{
     display: inline-block;
+    vertical-align: top;
     width: 100%;
-    text-align: center;
     font-size: 12px;
+    section{
+      margin-bottom: 20px;
+    }
+    h4{
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+    p{
+      line-height: 1.8;
+      font-size: 10px;
+    }
   }
   &__pager{
-    position: absolute;
-    left: 0;
-    bottom: 170px;
-    height: 6px;
     width: 100%;
     text-align: center;
     .page{
       display: inline-block;
+      vertical-align: top;
       width: 6px;
       height: 6px;
       border-radius: 50%;
@@ -51,7 +60,7 @@
   }
   &__summary{
     display: flex;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     .summary{
       flex: 1;
       h6{
@@ -61,7 +70,7 @@
         font-size: 9px;
       }
       h5{
-        margin-bottom: -10px;
+        margin-bottom: 5px;
         font-weight: normal;
         font-size: 12px;
       }
@@ -74,6 +83,11 @@
         height: 200px;
         width: 200px;
         margin: 0 auto;
+        &.half{
+          display: inline-block;
+          height: 130px;
+          width: 130px;
+        }
         text{
           fill: #FFFFFF;
         }

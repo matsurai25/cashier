@@ -2,26 +2,63 @@
   .dashboard__head
     h1 {{$root.$data.appinfo.name}}
     h2.tk v{{$root.$data.appinfo.version}}
+  .dashboard__summary
+    .summary
+      h6 visitor
+      span {{$root.countDeals()}}
+    .summary
+      h6 item
+      span {{$root.countDealItems()}}
+    .summary
+      h6 total
+      span {{$root.earnings()}}
+  .dashboard__pager.js-dashboard-pager
+    .page.on
+    .page
+    .page
+    .page
+
   .dashboard__content.js-dashboard-content
     .dashboard__container.js-dashboard-container
       .dashboard__summary
         .summary
-          h6 visitor
-          span {{$root.countDeals()}}
-        .summary
-          h6 item
-          span {{$root.countDealItems()}}
-        .summary
-          h6 total
-          span {{$root.earnings()}}
-      .dashboard__summary
-        .summary
           h5 頒布数の割合
-          .summary-donut
+          .summary-donut(data-type='items')
 
     .dashboard__container.js-dashboard-container
-      | ないようにこめ
-  .dashboard__pager.js-dashboard-pager
-    .page.on
-    .page
+      .dashboard__summary
+        .summary
+          h5 男女比
+          .summary-donut.half(data-type='genders')
+        .summary
+          h5 年代比
+          .summary-donut.half(data-type='ages')
+    .dashboard__container.js-dashboard-container
+      section
+        h4 このアプリについて
+        p
+          | 即売会を数値化して今後に活かそう。
+          br
+          | そう思い、面倒な即売会の記録を
+          br
+          | できるだけ取りやすくするために作成しました。
+          br
+          | 売上の計算やその日の振り返りに
+          br
+          | ご活用ください。
+    .dashboard__container.js-dashboard-container
+      section
+        h4 使い方
+        p
+          | はじめに初期化してから始めてください。
+          br
+          | 説明が必要そうな部分だけ。
+          br
+          | アイテム長押し：選択解除
+          br
+          | アイテム２本指タップ：アイテム削除
+          br
+          | 細かいことは
+          a(href="#")こちら(後でリンクにします)
+
   
