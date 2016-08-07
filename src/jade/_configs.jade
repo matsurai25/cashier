@@ -14,6 +14,11 @@ template#modal-configs
     section
       .config
         .config__name
+          | CSVでデータを出力する
+        .config__action
+          .config__action__btn(@click="$root.makeCSV()") 出力
+      .config
+        .config__name
           | 初期化する
         .config__action
           .config__action__btn(v-on:click="$root.initialize()") 実行

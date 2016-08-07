@@ -1,22 +1,26 @@
 $ = require 'jQuery'
 moment = require 'moment'
 Vue = require 'Vue'
+Vue.config.devtools = false
 VueTouch = require 'vue-touch'
 d3 = require '../lib/d3.v3.min.js'
 
 store = require './store'
 toast = require './toast'
 appinfo = require './appinfo'
+window.neta = require './neta'
 
 if !store.getState()?
   # store.init()
   store.setDummy()
 
 # 最新バージョンじゃない場合にアラート
-if store.getState().appinfo.version < appinfo.version
-  if window.confirm("デバッグありがとうございます。古いデータを消去し、ダミーデータを挿入します。")
-    store.setDummy()
+# if store.getState().appinfo.version < appinfo.version
+#   alert("ブラウザに保存されているデータのバージョンが古いようです。上手くconfigから初期化すると上手く動くかと思います。")
 
+console.log '%c3日目西さ18b%cで売り子している僕と握手！', 'color:rgb(250, 41, 129);font-weight:bold;text-decoration:underline', ''
+console.log '桜木蓮先生の綺麗なイラスト本も買おうな！'
+console.log '強い人は%cneta.github()%cしてね。', 'color:rgb(22, 50, 172);background:#EFEFEF;border-radius:3px;padding:3px;', ''
 
 # タッチ操作を登録
 VueTouch.registerCustomEvent('dualtap', {
@@ -357,25 +361,34 @@ $ ->
       # =================
 
       # 合計売上
-      earnings: () ->
+      earnings: (format = true) ->
         eaning = 0
         deals =  this.$data.deals
         for deal in deals
           if deal.price?
             eaning += deal.price
-        return this.formatNumber(eaning)
+        if format == true
+          return this.formatNumber(eaning)
+        else
+          return eaning
 
       # 累計取引回数
-      countDeals: () ->
-        return this.formatNumber(this.$data.deals.length)
+      countDeals: (format = true) ->
+        if format == true
+          return this.formatNumber(this.$data.deals.length)
+        else
+          return this.$data.deals.length
 
       # 累計取引アイテム数
-      countDealItems: () ->
+      countDealItems: (format = true) ->
         count = 0
         deals =  this.$data.deals
         for deal in deals
           count += deal.items.length
-        return this.formatNumber(count)
+        if format == true
+          return this.formatNumber(count)
+        else
+          count
 
       # 配列内の同じ要素の数を返す
       countItemInItems: (item_ids, item_id) ->
@@ -383,6 +396,65 @@ $ ->
           id == item_id
         ).length
 
+      # CSVを作成
+      makeCSV: () ->
+        csv =
+          content : ''
+          line : (array) ->
+            this.content += array.join(',')+'\n'
+        csv.line(['■ 全体まとめ'])
+        csv.line(['来客数','頒布した総数','総売上'])
+        csv.line(["#{this.countDeals(false)}","#{this.countDealItems(false)}","#{this.earnings(false)}"])
+        csv.line(['■ アイテム情報'])
+        csv.line(['名前','単価','頒布個数','売上'])
+        for item in this.$data.items
+          row = []
+          row.push(item.name)
+          row.push(item.price)
+          row.push(item.count)
+          row.push(item.count*item.price)
+          csv.line(row)
+        csv.line(['■ 取引情報'])
+        if this.statistics_f()
+          csv.line(['時間','金額','頒布物','性別','年代'])
+        else
+          csv.line(['時間','金額','頒布物'])
+        for deal in this.$data.deals
+          row = []
+          row.push(deal.created)
+          row.push(deal.price)
+          cell = []
+          for item_id in deal.items
+            cell.push(this.findItem(item_id).name)
+          row.push(cell.join("/"))
+          if this.statistics_f()
+            gender = {
+              man:"男性"
+              woman:"女性"
+            }
+            age = {
+              '10':"10代"
+              '20':"20代"
+              '30':"30代-40代"
+              '50':"50代以上"
+            }
+            row.push(gender[deal.statistics.gender])
+            row.push(age[deal.statistics.age])
+          csv.line(row)
+        csv.line(['■ その他'])
+        csv.line(['作成日',moment().format('YYYY/MM/DD HH:mm:ss')])
+        csv.line(['アプリ名',appinfo.name])
+        csv.line(['アプリバージョン',appinfo.version])
+        csv.line(['url', location.href])
+        csv.line(['作者', 'まつらい(@matsurai25)'])
+
+        bom = new Uint8Array([0xEF, 0xBB, 0xBF])
+        blob = new Blob([ bom, csv.content ], { "type" : "text/csv" })
+        if (window.navigator.msSaveBlob)
+          window.navigator.msSaveBlob(blob, "頒布レコーダ_#{moment().format('YYYY-MM-DD_HH-mm-ss')}.csv")
+          window.navigator.msSaveOrOpenBlob(blob, "頒布レコーダ_#{moment().format('YYYY-MM-DD_HH-mm-ss')}.csv")
+        else
+          location.href = window.URL.createObjectURL(blob)
 
 
       # =================

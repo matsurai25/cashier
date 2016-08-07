@@ -13,6 +13,7 @@
     box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
     background-color: $color-white;
     margin-right: 10px;
+    @include animation(ItemIn, 0.5, $easeOutQuint);
     .thumb{
       font-size: 0;
       width: 100%;
