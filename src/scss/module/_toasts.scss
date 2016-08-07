@@ -21,8 +21,7 @@
       @include animation(ToastfadeOut, 0.8, $easeOutCubic, 0);
     }
     &.warning{
-      @include gradient(rgba(lighten(desaturate(adjust-hue($color-blue, -40deg), 30), 20), 1), rgba(lighten(desaturate(adjust-hue($color-blue, -10deg), 20), 20), 1), horizontal);
-      filter: hue-rotate(240deg);
+      background-color: rgba($color-red,0.8);
     }
     &.success{
       @include gradient(rgba(lighten(desaturate(adjust-hue($color-blue, -40deg), 30), 20), 1), rgba(desaturate(adjust-hue($color-blue, -10deg), 20), 1), horizontal);

@@ -17,7 +17,6 @@ if store.getState().appinfo.version < appinfo.version
   if window.confirm("デバッグありがとうございます。古いデータを消去し、ダミーデータを挿入します。")
     store.setDummy()
 
-console.log JSON.stringify(store.getState())
 
 # タッチ操作を登録
 VueTouch.registerCustomEvent('dualtap', {

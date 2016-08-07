@@ -2,12 +2,10 @@ template#modal-deals
   .deals
     table.deals__list
       tr.deals__list__head
-        td 日時
+        td 時間
         td 金額
-        td 内容
+        td 頒布物
         td(v-if="$root.statistics_f()") 情報
-        //- td.deals__list__price 
-        //-   |{{earnings()}}
 
       tr.deal(v-for="deal in $root.deals")
         td
