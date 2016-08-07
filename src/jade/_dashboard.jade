@@ -14,18 +14,18 @@
       span {{$root.earnings()}}
   .dashboard__pager.js-dashboard-pager
     .page.on
-    .page
-    .page(v-if="$root.statistics_f()")
+    .page(v-if="$root.deals.length > 0")
+    .page(v-if="$root.deals.length > 0 && $root.statistics_f()")
     .page
 
   .dashboard__content.js-dashboard-content
-    .dashboard__container.js-dashboard-container
+    .dashboard__container.js-dashboard-container(v-if="$root.deals.length > 0")
       .dashboard__summary
         .summary
           h5 頒布数の割合
           .summary-donut(data-type='items')
 
-    .dashboard__container.js-dashboard-container(v-if="$root.statistics_f()")
+    .dashboard__container.js-dashboard-container(v-if="$root.deals.length > 0 && $root.statistics_f()")
       .dashboard__summary
         .summary
           h5 男女比

@@ -1,6 +1,9 @@
 template#modal-deals
   .deals
-    table.deals__list
+    .deals__empty(v-if="$root.deals.length == 0")
+      | データがないよ！
+      
+    table.deals__list(v-if="$root.deals.length > 0")
       tr.deals__list__head
         td 時間
         td 金額
