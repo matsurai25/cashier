@@ -16,10 +16,10 @@ template#modal-create
         .thumb_image.js-show-thumb
           img(src="", alt="")
           i.fa.fa-camera
-      input.js-image-upload#image-upload(type="file", name='image', v-on:change="$root.getDataUrl()")
+      input.js-image-upload#image-upload(type="file", name='image', v-on:change="$root.getDataUrl()", accept="image/*")
       input.js-item-thumb(type="hidden")
       .caption
-        | 写真を撮るか、イラスト等をサムネイルとして登録してください。
+        | 写真を撮るか、イラスト等をサムネイルとして登録してください。写真が回転してしまう場合は、一度トリミング等で編集してから上げてみてください。
 
 
     .btn(v-on:click="$root.createItem()") 追加する

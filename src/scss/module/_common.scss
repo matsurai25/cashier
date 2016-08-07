@@ -5,6 +5,9 @@ body{
   color: $color-black;
   overflow: hidden;
 }
+input{
+  -webkit-appearance: none; 
+}
 .result{
   position: relative;
   padding: 10px 15px;

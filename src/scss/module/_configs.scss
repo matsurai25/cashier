@@ -1,6 +1,11 @@
 .configs{
   section{
-    margin-bottom: 30px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #DDD;
+    &:last-child{
+      border-bottom: none;
+    }
   }
   .config{
     display: flex;
@@ -19,12 +24,18 @@
         display: inline-block;
         width: 40px;
         height: 22px;
+        margin-top: 2px;
         border-radius: 3px;
-        background-color: #DDD;
+        background-color: #999999;
         text-align: center;
         line-height: 22px;
         color: #FFF;
       }
+    }
+    p{
+      margin-top: 20px;
+      font-size: 10px;
+      color: #BBB;
     }
   }
 }

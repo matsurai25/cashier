@@ -11,8 +11,8 @@ appinfo = require './appinfo'
 window.neta = require './neta'
 
 if !store.getState()?
-  # store.init()
-  store.setDummy()
+  store.init()
+  # store.setDummy()
 
 # 最新バージョンじゃない場合にアラート
 # if store.getState().appinfo.version < appinfo.version
@@ -396,66 +396,16 @@ $ ->
           id == item_id
         ).length
 
-      # CSVを作成
-      makeCSV: () ->
-        csv =
-          content : ''
-          line : (array) ->
-            this.content += array.join(',')+'\n'
-        csv.line(['■ 全体まとめ'])
-        csv.line(['来客数','頒布した総数','総売上'])
-        csv.line(["#{this.countDeals(false)}","#{this.countDealItems(false)}","#{this.earnings(false)}"])
-        csv.line(['■ アイテム情報'])
-        csv.line(['名前','単価','頒布個数','売上'])
-        for item in this.$data.items
-          row = []
-          row.push(item.name)
-          row.push(item.price)
-          row.push(item.count)
-          row.push(item.count*item.price)
-          csv.line(row)
-        csv.line(['■ 取引情報'])
-        if this.statistics_f()
-          csv.line(['時間','金額','頒布物','性別','年代'])
-        else
-          csv.line(['時間','金額','頒布物'])
-        for deal in this.$data.deals
-          row = []
-          row.push(deal.created)
-          row.push(deal.price)
-          cell = []
-          for item_id in deal.items
-            cell.push(this.findItem(item_id).name)
-          row.push(cell.join("/"))
-          if this.statistics_f()
-            gender = {
-              man:"男性"
-              woman:"女性"
-            }
-            age = {
-              '10':"10代"
-              '20':"20代"
-              '30':"30代-40代"
-              '50':"50代以上"
-            }
-            row.push(gender[deal.statistics.gender])
-            row.push(age[deal.statistics.age])
-          csv.line(row)
-        csv.line(['■ その他'])
-        csv.line(['作成日',moment().format('YYYY/MM/DD HH:mm:ss')])
-        csv.line(['アプリ名',appinfo.name])
-        csv.line(['アプリバージョン',appinfo.version])
-        csv.line(['url', location.href])
-        csv.line(['作者', 'まつらい(@matsurai25)'])
-
-        bom = new Uint8Array([0xEF, 0xBB, 0xBF])
-        blob = new Blob([ bom, csv.content ], { "type" : "text/csv" })
-        if (window.navigator.msSaveBlob)
-          window.navigator.msSaveBlob(blob, "頒布レコーダ_#{moment().format('YYYY-MM-DD_HH-mm-ss')}.csv")
-          window.navigator.msSaveOrOpenBlob(blob, "頒布レコーダ_#{moment().format('YYYY-MM-DD_HH-mm-ss')}.csv")
-        else
-          location.href = window.URL.createObjectURL(blob)
-
+      # dealsを空に
+      clearDeals: () ->
+        return if !window.confirm('取引情報をリセットします')
+        this.$data.deals = []
+        # 各アイテムの販売数を0に
+        items =  this.$data.items
+        for item in items
+          item.count = 0
+        this.save()
+        location.reload()
 
       # =================
       #      modal
@@ -784,5 +734,72 @@ $ ->
       changeConfig: (key, value) ->
         this.$data.configs[key] = value
         this.save()
+
+      # CSVを作成
+      makeCSV: () ->
+        csv =
+          content : ''
+          line : (array) ->
+            this.content += array.join(',')+'\n'
+        csv.line(['■ 全体まとめ'])
+        csv.line(['来客数','頒布した総数','総売上'])
+        csv.line(["#{this.countDeals(false)}","#{this.countDealItems(false)}","#{this.earnings(false)}"])
+        csv.line(['■ アイテム情報'])
+        csv.line(['名前','単価','頒布個数','売上'])
+        for item in this.$data.items
+          row = []
+          row.push(item.name)
+          row.push(item.price)
+          row.push(item.count)
+          row.push(item.count*item.price)
+          csv.line(row)
+        csv.line(['■ 取引情報'])
+        if this.statistics_f()
+          csv.line(['時間','金額','頒布物','性別','年代'])
+        else
+          csv.line(['時間','金額','頒布物'])
+        for deal in this.$data.deals
+          row = []
+          row.push(deal.created)
+          row.push(deal.price)
+          cell = []
+          for item_id in deal.items
+            item = this.findItem(item_id)
+            if item?
+              cell.push(item.name)
+          row.push(cell.join("/"))
+          if this.statistics_f()
+            gender = {
+              man:"男性"
+              woman:"女性"
+            }
+            age = {
+              '10':"10代"
+              '20':"20代"
+              '30':"30代-40代"
+              '50':"50代以上"
+            }
+            row.push(gender[deal.statistics.gender])
+            row.push(age[deal.statistics.age])
+          csv.line(row)
+        csv.line(['■ その他'])
+        csv.line(['作成日',moment().format('YYYY/MM/DD HH:mm:ss')])
+        csv.line(['アプリ名',appinfo.name])
+        csv.line(['アプリバージョン',appinfo.version])
+        csv.line(['url', location.href])
+        csv.line(['作者', 'まつらい(@matsurai25)'])
+
+        bom = new Uint8Array([0xEF, 0xBB, 0xBF])
+        blob = new Blob([ bom, csv.content ], { "type" : "text/csv" })
+        filename = "頒布レコーダ_#{moment().format('YYYY-MM-DD_HH-mm-ss')}.csv"
+        if (window.navigator.msSaveBlob)
+          window.navigator.msSaveBlob(blob, filename)
+          window.navigator.msSaveOrOpenBlob(blob, filename)
+        else
+          a = document.createElement("a")
+          a.href = URL.createObjectURL(blob)
+          a.target = '_blank'
+          a.download = filename
+          a.click()
 
   )

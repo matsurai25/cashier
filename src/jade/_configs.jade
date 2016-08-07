@@ -16,7 +16,13 @@ template#modal-configs
         .config__name
           | CSVでデータを出力する
         .config__action
-          .config__action__btn(@click="$root.makeCSV()") 出力
+          .config__action__btn(@click="$root.makeCSV()") 実行
+    section
+      .config
+        .config__name
+          | 取引情報を空にする
+        .config__action
+          .config__action__btn(@click="$root.clearDeals()") 実行
       .config
         .config__name
           | 初期化する
@@ -27,3 +33,5 @@ template#modal-configs
           | ダミーを入れる
         .config__action
           .config__action__btn(v-on:click="$root.setdummy()") 実行
+      .config
+        p Twitter等のアプリ内で立ちあげるブラウザの場合、一部のjavascriptが効かない場合があり上手く動作しませんので、Safari等からお試しください。
