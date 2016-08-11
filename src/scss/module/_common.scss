@@ -1,14 +1,13 @@
 body{
-  width: 320px;
+  width: 100%;
   height: 100%;
   padding-bottom: 50px;
   background-color: #EFEFEF;
   color: $color-black;
   overflow: hidden;
   box-sizing: border-box;
-  @include PC {
-    width: 100%;
-  };
+  // @include PC {
+  // };
 }
 input{
   -webkit-appearance: none;

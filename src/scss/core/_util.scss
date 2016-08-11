@@ -1,6 +1,6 @@
 // media queris
 
-$pc-width:1000px;
+$pc-width:426px;
 @mixin SP {
   @media screen and (max-width: $pc-width - 1) {
     @content;

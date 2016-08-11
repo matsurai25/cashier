@@ -2,15 +2,36 @@
 html
   head
     meta(charset="UTF-8")
-    meta(name="viewport", content="width=320,user-scalable=no")
+    title 同人会計レコーダー
     link(rel="stylesheet", href="./assets/css/font-awesome.css")
     link(rel="stylesheet", href="./assets/css/application.css")
     script(src="./assets/js/bundle.js")
     meta(name="apple-mobile-web-app-capable", content="yes")
     meta(name="apple-mobile-web-app-status-bar-style", content="black-translucent")
+    meta(name="keywords", content="同人,会計")
+    meta(name="description", content="同人即売会における会計記録をやりやすくするためのブラウザアプリ")
+    meta(property="og:title", content="同人会計レコーダー")
+    meta(property="og:description", content="同人即売会における会計記録をやりやすくするためのブラウザアプリです。")
+    meta(property="og:url", content="http://matsurai25.info/cashier/")
+    meta(property="og:type", content="website")
+      
+    meta(name="twitter:card", content="summary")
+    meta(name="twitter:title", content="同人会計レコーダー")
+    meta(name="twitter:description", content="同人即売会における会計記録をやりやすくするためのブラウザアプリです。")
+
     script(src="https://use.typekit.net/rlq3krh.js")
     script.
      try{Typekit.load({ async: true });}catch(e){}
+    script.
+      var w = window.parent.screen.width;
+      if(w < 425){
+        var meta = document.createElement('meta');
+        meta.setAttribute('name', 'viewport');
+        meta.setAttribute('content', 'width=320,user-scalable=no');
+        document.getElementsByTagName('head')[0].appendChild(meta);
+      }
+
+
 
   body#vue
     .toasts

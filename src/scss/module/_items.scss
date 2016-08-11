@@ -3,6 +3,11 @@
   padding-right: 5px;
   font-size: 0;
   overflow: hidden;
+  @include SP {
+    box-sizing: border-box;
+    width: 320px;
+    margin: 0 auto;
+  }
   .item{
     position: relative;
     display: inline-block;
