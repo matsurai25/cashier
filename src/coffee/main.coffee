@@ -10,6 +10,11 @@ toast = require './toast'
 appinfo = require './appinfo'
 window.neta = require './neta'
 
+model = require './model'
+
+# class
+Socket = require './socket'
+
 if !store.getState()?
   store.init()
   # store.setDummy()
@@ -49,6 +54,9 @@ $ ->
   Vue.component('modal-configs', {
     template: "#modal-configs"
   })
+  Vue.component('modal-notsupported', {
+    template: "#modal-notsupported"
+  })
 
   Vue.component('statistics-gender', {
     template: "#statistics-gender",
@@ -63,6 +71,35 @@ $ ->
   window.vue = new Vue(
     el: '#vue'
     data:store.getState()
+    created: ->
+      # stateを初期化
+      this.$data.state = model.state
+      this.save()
+
+      # 同期がオンなら開始
+      if this.$data.configs.sync_f == true
+        this.initSocket()
+
+      ua = window.navigator.userAgent
+      console.log ua
+
+      # param:keyがついてたら
+      params = getUrlVars()
+      if params['key']?
+        key = $('<div />').text(params['key']).html()
+        unless this.$data.configs.sync_f == true && key == this.$data.configs.identifier
+          this.$data.configs.sync_available = true
+          this.$data.configs.sync_f = false
+          this.$data.configs.identifier = key
+          this.$data.state.modalContent = 'modal-configs'
+          this.save()
+          toast.show("名前を入力して接続してください！")
+
+      if ua.toLowerCase().indexOf('twitter') >= 0
+        this.$data.state.modalContent = 'modal-notsupported'
+
+
+
     methods:
 
       # =================
@@ -217,6 +254,23 @@ $ ->
         item.count--
         this.save()
 
+      # itemのカウントをdealsをもとに計算させる
+      updateItemCount: () ->
+        items =  this.$data.items
+        deals =  this.$data.deals
+        counts = {}
+        for deal in deals
+          for item_id in deal.items
+            if counts[item_id]?
+              counts[item_id]++
+            else
+              counts[item_id] = 1
+        console.log counts
+        for item in items
+          if counts[item.id]?
+            item.count = counts[item.id]
+        this.save()
+
       # カート内のアイテムの値段の合計
       cartPrice: () ->
         price = 0
@@ -351,6 +405,8 @@ $ ->
         for item_id in deal.items
           this.increseItemCount(item_id)
         this.clearCart()
+        if this.$data.configs.sync_f
+          this.socket.sync()
         this.save()
         toast.show("保存しました！")
 
@@ -733,6 +789,39 @@ $ ->
       # コンフィグの内容を更新
       changeConfig: (key, value) ->
         this.$data.configs[key] = value
+        if key == 'sync_available' && value == false
+          this.$data.configs['sync_f'] = false
+        this.save()
+
+      # コンフィグの内容を更新
+      changeConfigByName: (name) ->
+        this.$data.configs[name] = $('<div />').text($('input[name="'+name+'"]').val()).html()
+        this.save()
+
+      # 共有用リンクを作成
+      shareLink: () ->
+        return window.location.href
+
+      # ランダムなIDを作成
+      makeRandomIdentifier: () ->
+        return if this.$data.configs.sync_f == true
+        this.$data.configs.identifier = getUniqueStr()
+        this.save()
+
+      # sync
+      sync: () ->
+        if !this.$data.configs.identifier?
+          alert "共有キーを設定してください"
+          return
+        if !this.$data.configs.username?
+          alert "名前を設定してください"
+          return
+        this.$data.configs.sync_f = !this.$data.configs.sync_f
+        if this.$data.configs.sync_f == true
+          history.replaceState('','',location.pathname + '?key=' + this.$data.configs.identifier)
+          this.initSocket()
+        else
+          this.closeSocket()
         this.save()
 
       # CSVを作成
@@ -802,4 +891,50 @@ $ ->
           a.download = filename
           a.click()
 
+      # =================
+      #     socket
+      # =================
+
+      initSocket: () ->
+        this.socket = new Socket(this)
+
+      closeSocket: () ->
+        this.socket.close()
+
+      addClassIfSynced: () ->
+        if this.$data.configs.sync_f
+          return "synced"
+        return ""
+
   )
+
+#
+#  GETパラメータを配列にして返す
+#  http://qiita.com/Evolutor_web/items/c9b940f752883676b35d
+#
+getUrlVars = () ->
+  vars = {}
+  param = location.search.substring(1).split('&')
+  for i in [0...param.length]
+    keySearch = param[i].search(/=/)
+    key = ''
+    if(keySearch != -1)
+      key = param[i].slice(0, keySearch)
+    val = param[i].slice(param[i].indexOf('=', 0) + 1)
+    if(key != '')
+      vars[key] = decodeURI(val)
+  return vars
+
+#
+# JavaScriptでユニークな文字列をさくっと生成する
+# http://qiita.com/coa00@github/items/679b0b5c7c468698d53f
+#
+getUniqueStr = (l = 8) ->
+  l = 8
+  # 生成する文字列に含める文字セット
+  c = "abcdefghijklmnopqrstuvwxyz0123456789"
+  cl = c.length
+  r = ""
+  for i in [0...l]
+    r += c[Math.floor(Math.random()*cl)]
+  return r

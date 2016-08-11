@@ -13,6 +13,7 @@
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^2.2.0",
     "npm": "^3.8.2",
+    "socket.io-client": "^1.4.8",
     "vue-touch": "^1.1.0"
   },
   "devDependencies": {

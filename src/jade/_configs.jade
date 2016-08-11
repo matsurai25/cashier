@@ -14,6 +14,45 @@ template#modal-configs
     section
       .config
         .config__name
+          | 複数端末で記録を行う
+        .config__action
+          input#sync_available.ui-switch(
+            type="checkbox",
+            checked="{{$root.$data.configs.sync_available}}",
+            v-on:change="$root.changeConfig('sync_available', !$root.$data.configs.sync_available)"
+          )
+          label(for="sync_available")
+      .config(v-if="$root.$data.configs.sync_f", transition="fade")
+        .config__name
+          | 現在のデータで相手を上書きする
+        .config__action
+          .config__action__btn(@click="$root.socket.syncAll()") 実行
+      .sync_configs(v-if="$root.$data.configs.sync_available", transition="fade")
+        .sync_config.js-sync-config
+          h6
+            | 共有キー
+          input(type='text', v-on:change="$root.changeConfigByName('identifier')", name='identifier', value="{{$root.$data.configs.identifier}}", :disabled="$root.$data.configs.sync_f")
+          .caption
+            | 同じ共有キーを知っている人同士でデータを共有します。
+          .caption.btn--inline(@click="$root.makeRandomIdentifier")
+            i.fa.fa-refresh
+            | &nbsp;ランダムに生成する
+        .sync_config.js-sync-config
+          h6
+            | 名前
+          input(type='text', v-on:change="$root.changeConfigByName('username')", name='username', value="{{$root.$data.configs.username}}", :disabled="$root.$data.configs.sync_f")
+          .caption
+            | データ更新時、他の人への通知に使います。グループ内のほかの人と名前が被らないようにしてください。
+        .sync_config
+          .btn.js-sync(v-on:click="$root.sync()", sync="{{$root.$data.configs.sync_f}}", :class="$root.addClassIfSynced()")
+        .sync_config(v-if="$root.$data.configs.sync_f", transition="fade")
+          h6
+            | 共有用リンク
+          input(type="text", value="{{$root.shareLink()}}")
+        
+    section
+      .config
+        .config__name
           | CSVでデータを出力する
         .config__action
           .config__action__btn(@click="$root.makeCSV()") 実行

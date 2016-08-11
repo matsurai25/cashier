@@ -53,7 +53,13 @@ dummy = {
     {"items":["20160803223044"],"statistics":{"gender":"man","age":"20","sample":"no"},"created":"2016-08-03 22:33:17","price":500}],
   "current":{"items":[],"statistics":{"gender":"man","age":"20","sample":""},"created":null,"price":0},
   "state":{"modalContent":null,"menu_f":false,"currentScroll":null},
-  "configs":{"statistics_f":true},
+  "configs":{
+    "statistics_f":true
+    "sync_f":false
+    "sync_available":false
+    "identifier":null
+    "name":null
+  },
 }
 dummy.appinfo = require './appinfo'
 

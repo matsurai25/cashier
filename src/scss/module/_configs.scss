@@ -38,4 +38,57 @@
       color: #BBB;
     }
   }
+  .sync_configs{
+    padding: 10px;
+    background-color: #F2F2F2;
+    .sync_config{
+      margin-bottom: 10px;
+    }
+    h6{
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .caption{
+      padding: 3px 5px;
+      font-size: 10px;
+      color: #BBB;
+    }
+    .btn--inline{
+      display: inline-block;
+      padding: 3px 6px;
+      margin: 3px;
+      border-radius: 3px;
+      background: #666;
+      text-align: center;
+      font-size: 10px;
+      color: #FFF;
+    }
+    input[type="text"],input[type="number"]{
+      width: 100%;
+      padding: 5px;
+      font-size: 14px;
+      color: $color-black;
+      border: 1px solid #EFEFEF;
+      border-radius: 3px;
+      background-color: #FFFFFF;
+      &:focus{
+        outline: none;
+        border-color: $color-blue;
+      }
+      &:disabled{
+        background-color: #DDD;
+      }
+    }
+    .btn{
+      &:after{
+        content:"この設定で接続する"
+      }
+      &.synced{
+        background-color: $color-blue;
+        &:after{
+          content:"接続中"
+        }
+      }
+    }
+  }
 }

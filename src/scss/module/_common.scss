@@ -1,12 +1,17 @@
 body{
-  width: 100%;
+  width: 320px;
+  height: 100%;
   padding-bottom: 50px;
   background-color: #EFEFEF;
   color: $color-black;
   overflow: hidden;
+  box-sizing: border-box;
+  @include PC {
+    width: 100%;
+  };
 }
 input{
-  -webkit-appearance: none; 
+  -webkit-appearance: none;
 }
 .result{
   position: relative;
@@ -57,4 +62,9 @@ input{
   &-green{
     background-color: $color-green;
   }
+}
+
+.modal-commontext{
+  text-align: center;
+  padding: 10px;
 }
